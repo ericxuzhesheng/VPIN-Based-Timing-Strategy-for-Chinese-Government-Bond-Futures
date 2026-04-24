@@ -143,6 +143,32 @@ position = signal_raw.shift(1)
 | TL | long_only_benchmark | 0.136346 | 0.058031 | 0.070550 | 0.822552 | 0.095250 | 0.609252 | 0.558669 | 0.000000 |
 | TL | vpin_strategy | 0.145706 | 0.061869 | 0.061949 | 0.998711 | 0.072508 | 0.853273 | 0.467601 | 0.245184 |
 
+### 结果图表
+
+#### T 合约
+
+<p align="center">
+  <img src="results/figures/t_price_vs_vpin.png" alt="T Price vs VPIN" width="48%">
+  <img src="results/figures/t_strategy_nav_vs_benchmark.png" alt="T Strategy NAV vs Benchmark" width="48%">
+</p>
+
+<p align="center">
+  <img src="results/figures/t_vpin_slope_vs_return.png" alt="T VPIN Slope vs Return" width="48%">
+  <img src="results/figures/t_drawdown_comparison.png" alt="T Drawdown Comparison" width="48%">
+</p>
+
+#### TL 合约
+
+<p align="center">
+  <img src="results/figures/tl_price_vs_vpin.png" alt="TL Price vs VPIN" width="48%">
+  <img src="results/figures/tl_strategy_nav_vs_benchmark.png" alt="TL Strategy NAV vs Benchmark" width="48%">
+</p>
+
+<p align="center">
+  <img src="results/figures/tl_vpin_slope_vs_return.png" alt="TL VPIN Slope vs Return" width="48%">
+  <img src="results/figures/tl_drawdown_comparison.png" alt="TL Drawdown Comparison" width="48%">
+</p>
+
 ### 快速开始
 
 克隆仓库：
@@ -354,6 +380,32 @@ The following results come from the existing `results/tables/backtest_summary.cs
 | T | vpin_strategy | 0.061142 | 0.018658 | 0.022427 | 0.831940 | 0.026380 | 0.707262 | 0.463535 | 0.276885 |
 | TL | long_only_benchmark | 0.136346 | 0.058031 | 0.070550 | 0.822552 | 0.095250 | 0.609252 | 0.558669 | 0.000000 |
 | TL | vpin_strategy | 0.145706 | 0.061869 | 0.061949 | 0.998711 | 0.072508 | 0.853273 | 0.467601 | 0.245184 |
+
+### Result Figures
+
+#### T Contract
+
+<p align="center">
+  <img src="results/figures/t_price_vs_vpin.png" alt="T Price vs VPIN" width="48%">
+  <img src="results/figures/t_strategy_nav_vs_benchmark.png" alt="T Strategy NAV vs Benchmark" width="48%">
+</p>
+
+<p align="center">
+  <img src="results/figures/t_vpin_slope_vs_return.png" alt="T VPIN Slope vs Return" width="48%">
+  <img src="results/figures/t_drawdown_comparison.png" alt="T Drawdown Comparison" width="48%">
+</p>
+
+#### TL Contract
+
+<p align="center">
+  <img src="results/figures/tl_price_vs_vpin.png" alt="TL Price vs VPIN" width="48%">
+  <img src="results/figures/tl_strategy_nav_vs_benchmark.png" alt="TL Strategy NAV vs Benchmark" width="48%">
+</p>
+
+<p align="center">
+  <img src="results/figures/tl_vpin_slope_vs_return.png" alt="TL VPIN Slope vs Return" width="48%">
+  <img src="results/figures/tl_drawdown_comparison.png" alt="TL Drawdown Comparison" width="48%">
+</p>
 
 ### Quick Start
 
