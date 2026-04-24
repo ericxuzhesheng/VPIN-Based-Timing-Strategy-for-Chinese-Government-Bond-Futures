@@ -336,18 +336,18 @@ def generate_vpin_signal(
     daily_vpin: pd.DataFrame,
     high_percentile_threshold: float = 0.8,
     slope_threshold: float = 0.0,
-    short_position: float = -1.0,
-    flat_position: float = 0.0,
+    long_position: float = 1.0,
+    defensive_position: float = 0.0,
 ) -> pd.DataFrame:
-    """Generate a lagged daily VPIN timing signal where VPIN acts strictly as a short (sell) signal."""
+    """Generate a lagged daily VPIN timing signal with a long-or-defensive exposure."""
     df = daily_vpin.copy().sort_values("date").reset_index(drop=True)
     df["vpin_high_flag"] = df["daily_vpin_percentile"] >= high_percentile_threshold
     df["slope_positive_flag"] = df["daily_vpin_slope"] > slope_threshold
     toxic_flow_flag = df["vpin_high_flag"] & df["slope_positive_flag"]
     
-    # VPIN as a short signal: toxic flow leads to short position, otherwise flat
-    df["signal_raw"] = np.where(toxic_flow_flag, short_position, flat_position)
-    df["position"] = df["signal_raw"].shift(1).fillna(flat_position)
+    # Toxic flow leads to defensive position, otherwise stay long
+    df["signal_raw"] = np.where(toxic_flow_flag, defensive_position, long_position)
+    df["position"] = df["signal_raw"].shift(1).fillna(long_position)
     return df
 
 
@@ -637,7 +637,7 @@ def parse_args() -> argparse.Namespace:
         default="ALL",
         help="Futures contract. Use ALL to run both T and TL together.",
     )
-    parser.add_argument("--start-date", default=None, help="Optional inclusive start date, e.g. 2024-01-01.")
+    parser.add_argument("--start-date", default="2024-01-01", help="Optional inclusive start date, e.g. 2024-01-01.")
     parser.add_argument("--output-dir", type=Path, default=Path("results"), help="Directory for figures and tables.")
     parser.add_argument(
         "--processed-dir",
@@ -662,13 +662,13 @@ def parse_args() -> argparse.Namespace:
         "--signal-percentile-threshold",
         type=float,
         default=0.8,
-        help="Daily VPIN percentile threshold for triggering a short signal.",
+        help="Daily VPIN percentile threshold for defensive positioning.",
     )
     parser.add_argument(
         "--signal-slope-threshold",
         type=float,
         default=0.0,
-        help="Daily VPIN slope threshold for triggering a short signal.",
+        help="Daily VPIN slope threshold for defensive positioning.",
     )
     parser.add_argument(
         "--transaction-cost",

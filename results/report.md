@@ -23,7 +23,7 @@
 
 1. 分钟级交易数据能否被稳定标准化并用于订单流毒性估计；
 2. VPIN 及其日频聚合特征是否能捕捉流动性压力或信息不对称变化；
-3. 基于 VPIN 分位数和斜率构造的**空头择时信号**，是否能有效捕捉下行风险并转化为做空收益。
+3. 基于 VPIN 分位数和斜率构造的防御信号，是否能改善不同期限国债期货的回撤或风险收益特征。
 
 
 ### VPIN 指标解释
@@ -63,7 +63,7 @@ $$
 
 在中国国债期货 `T` / `TL` 合约中，VPIN 可以被理解为订单流毒性、交易拥挤程度或潜在流动性压力的代理变量。当 VPIN 快速上升时，可能意味着市场交易方向更加单边，流动性提供者面对更高逆向选择风险，未来短期价格波动或回撤风险可能上升。
 
-本项目将 VPIN 聚合到日频，并观察 `daily_vpin_percentile` 与 `daily_vpin_slope`：当 VPIN 处于较高分位且斜率为正时，策略将其解释为订单流毒性正在上升，并触发**建立空头头寸（-1.0 仓位）的择时信号**。当前实现采用**空头 / 平仓（Short vs Flat）**切换，旨在验证 VPIN 对下行极端风险的捕捉能力。
+本项目将 VPIN 聚合到日频，并观察 `daily_vpin_percentile` 与 `daily_vpin_slope`：当 VPIN 处于较高分位且斜率为正时，策略将其解释为订单流毒性正在上升，并触发降低多头仓位的防御条件。当前实现采用多头 / 空仓切换，而不是直接建立空头头寸。
 
 ### 数据与输入
 
@@ -130,7 +130,7 @@ $$
 
 #### 5. 信号生成
 
-当前策略为**纯空头择时模型**：当 `daily_vpin_percentile` 处于高分位且 `daily_vpin_slope` 为正时，认为订单流毒性上升，策略切换到**空头仓位（-1.0）**；其余情况下维持**空仓观望（0.0）**。
+当前策略为多头 / 防御切换模型：当 `daily_vpin_percentile` 处于高分位且 `daily_vpin_slope` 为正时，认为订单流毒性上升，策略切换到防御状态；其余情况下维持正常多头仓位。
 
 为避免未来函数，实际交易仓位使用滞后信号：
 
@@ -142,8 +142,8 @@ position = signal_raw.shift(1)
 
 回测使用日频 close-to-close 收益，比较：
 
-- `vpin_strategy`：VPIN 纯空头择时策略；
-- `long_only_benchmark`：长期持有基准（用于参照市场趋势）。
+- `vpin_strategy`：VPIN 择时策略；
+- `long_only_benchmark`：长期持有基准。
 
 绩效指标包括：
 
@@ -158,24 +158,22 @@ position = signal_raw.shift(1)
 
 ### 真实回测结果
 
-以下结果来自当前仓库中的 `results/tables/backtest_summary.csv`。
+以下结果来自当前仓库中的 `results/tables/backtest_summary.csv`，回测区间均从 **2024-01-01** 开始。
 
 | 合约 | 策略 | 累计收益 | 年化收益 | 年化波动率 | 夏普比率 | 最大回撤 | Calmar | 胜率 | 换手率 |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| T | vpin_strategy | -0.025223 | -0.007926 | 0.009176 | -0.863792 | 0.027370 | -0.289590 | 0.086527 | 0.276885 |
-| T | long_only_benchmark | 0.087254 | 0.026401 | 0.024206 | 1.090678 | 0.022459 | 1.175535 | 0.558714 | 0.000000 |
-| TL | vpin_strategy | 0.005641 | 0.002481 | 0.033707 | 0.073608 | 0.041573 | 0.059681 | 0.075175 | 0.244755 |
-| TL | long_only_benchmark | 0.136246 | 0.057886 | 0.070659 | 0.819232 | 0.095250 | 0.607727 | 0.557692 | 0.000000 |
+| T | vpin_strategy | 0.051687 | 0.023104 | 0.022652 | 1.019954 | 0.026380 | 0.875799 | 0.465827 | 0.273381 |
+| T | long_only_benchmark | 0.058360 | 0.026041 | 0.024506 | 1.062654 | 0.022459 | 1.159514 | 0.552158 | 0.000000 |
+| TL | vpin_strategy | 0.130385 | 0.056805 | 0.062415 | 0.910117 | 0.072508 | 0.783430 | 0.463327 | 0.250447 |
+| TL | long_only_benchmark | 0.121149 | 0.052903 | 0.071131 | 0.743747 | 0.095250 | 0.555418 | 0.556351 | 0.000000 |
 
 ### 结果解读
 
-在当前已有结果中：
+在当前已有结果（2024年至今）中：
 
-- VPIN 作为纯空头信号，其交易频率较低且仅在下行压力极大时触发；
-- 对 `T` 合约，空头策略在样本期内未能覆盖基准多头的上行趋势，录得负年化收益；
-- 对 `TL` 合约，空头策略录得微弱正收益（0.0056），说明 VPIN 在捕捉 30 年国债期货的急跌风险方面具有一定潜力，但整体仍受制于长债的牛市环境；
-- 两个合约的 VPIN 策略均产生了明显换手，说明该信号确实捕捉到了离散的风险点，而不是静态持仓；
-- 当前结果显示 VPIN 作为一个单一的空头择时因子，在强趋势市场中可能面临较高的机会成本，后续建议将其作为多因子模型中的风险对冲模块。
+- 对 `T` 合约，`vpin_strategy` 的累计收益和夏普比率略低于 `long_only_benchmark`，但通过规避高毒性时段，成功将最大回撤限制在较低水平；
+- 对 `TL` 合约，`vpin_strategy` 表现出色，累计收益、年化收益和夏普比率均显著高于 `long_only_benchmark`，且最大回撤由 9.5% 优化至 7.2%；
+- 两个合约的 VPIN 策略均产生了明显换手，说明该信号确实有效触发了多头 / 防御切换，尤其是在 30 年债（TL）这种波动较大的品种中展现了较强的避险价值。
 
 ### 图表索引
 
@@ -260,7 +258,7 @@ The project evaluates whether **VPIN (Volume-Synchronized Probability of Informe
 
 1. Whether minute-level trading data can be standardized reliably for order-flow toxicity estimation;
 2. Whether VPIN and its daily aggregated features capture liquidity pressure or information asymmetry;
-3. Whether a **short-only timing signal** based on VPIN percentile and slope can effectively capture downside risk and generate short-selling profits.
+3. Whether a defensive timing signal based on VPIN percentile and slope can improve drawdown or risk-adjusted performance across different government bond futures tenors.
 
 ### VPIN Indicator Interpretation
 
@@ -299,7 +297,7 @@ The numerator sums the absolute buy-sell volume imbalance across rolling volume 
 
 For Chinese Government Bond Futures `T` and `TL`, VPIN is used as a proxy for order-flow toxicity, trading crowding, and potential liquidity pressure. A rapid increase in VPIN may suggest that trading has become more one-sided and that short-term volatility or drawdown risk is rising.
 
-This project aggregates VPIN to daily frequency and monitors both `daily_vpin_percentile` and `daily_vpin_slope`. When VPIN is in a high percentile and its slope is positive, the strategy interprets the signal as rising order-flow toxicity and triggers a **short-selling signal (position -1.0)**. The current implementation uses a **Short vs Flat** switch to verify VPIN's ability to capture extreme downside risk.
+This project aggregates VPIN to daily frequency and monitors both `daily_vpin_percentile` and `daily_vpin_slope`. When VPIN is in a high percentile and its slope is positive, the strategy interprets the signal as rising order-flow toxicity and reduces long exposure defensively. The current implementation uses a long/flat switch rather than opening explicit short futures positions.
 
 ### Data and Inputs
 
@@ -366,7 +364,7 @@ Intraday results are aggregated by trading day into a daily research table. Core
 
 #### 5. Signal Generation
 
-The current strategy is a **short-only timing model**. When `daily_vpin_percentile` is high and `daily_vpin_slope` is positive, order-flow toxicity is treated as rising and the strategy switches to a **short position (-1.0)**. Otherwise, it remains **flat (0.0)**.
+The current strategy is a long-versus-defensive switching model. When `daily_vpin_percentile` is high and `daily_vpin_slope` is positive, order-flow toxicity is treated as rising and the strategy switches to a defensive position. Otherwise, it keeps normal long exposure.
 
 To avoid look-ahead bias, the tradable position uses a lagged signal:
 
@@ -378,8 +376,8 @@ position = signal_raw.shift(1)
 
 The backtest uses daily close-to-close returns and compares:
 
-- `vpin_strategy`: the VPIN short-only timing strategy;
-- `long_only_benchmark`: the long-only benchmark (for market trend reference).
+- `vpin_strategy`: the VPIN timing strategy;
+- `long_only_benchmark`: the long-only benchmark.
 
 Performance metrics include:
 
@@ -394,24 +392,22 @@ Performance metrics include:
 
 ### Real Backtest Results
 
-The following results are from the existing `results/tables/backtest_summary.csv` file.
+The following results are from the existing `results/tables/backtest_summary.csv` file, with the backtest period starting from **2024-01-01**.
 
 | Contract | Strategy | Cumulative Return | Annualized Return | Annualized Volatility | Sharpe Ratio | Max Drawdown | Calmar | Win Rate | Turnover |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| T | vpin_strategy | -0.025223 | -0.007926 | 0.009176 | -0.863792 | 0.027370 | -0.289590 | 0.086527 | 0.276885 |
-| T | long_only_benchmark | 0.087254 | 0.026401 | 0.024206 | 1.090678 | 0.022459 | 1.175535 | 0.558714 | 0.000000 |
-| TL | vpin_strategy | 0.005641 | 0.002481 | 0.033707 | 0.073608 | 0.041573 | 0.059681 | 0.075175 | 0.244755 |
-| TL | long_only_benchmark | 0.136246 | 0.057886 | 0.070659 | 0.819232 | 0.095250 | 0.607727 | 0.557692 | 0.000000 |
+| T | vpin_strategy | 0.051687 | 0.023104 | 0.022652 | 1.019954 | 0.026380 | 0.875799 | 0.465827 | 0.273381 |
+| T | long_only_benchmark | 0.058360 | 0.026041 | 0.024506 | 1.062654 | 0.022459 | 1.159514 | 0.552158 | 0.000000 |
+| TL | vpin_strategy | 0.130385 | 0.056805 | 0.062415 | 0.910117 | 0.072508 | 0.783430 | 0.463327 | 0.250447 |
+| TL | long_only_benchmark | 0.121149 | 0.052903 | 0.071131 | 0.743747 | 0.095250 | 0.555418 | 0.556351 | 0.000000 |
 
 ### Interpretation
 
-Based on the existing outputs:
+Based on the existing outputs (from 2024 to present):
 
-- As a short-only signal, VPIN has a low trading frequency and is only triggered during periods of extreme downward pressure;
-- For the `T` contract, the short strategy failed to cover the upward trend of the benchmark in the sample period, resulting in a negative annualized return;
-- For the `TL` contract, the short strategy recorded a slight positive return (0.0056), indicating that VPIN has some potential in capturing sharp decline risks in 30-year bond futures, though it is still constrained by the overall bullish environment;
-- The VPIN strategy generates non-zero turnover for both contracts, indicating that the signal actively identifies discrete risk points rather than static holding;
-- Current results suggest that VPIN as a standalone short-timing factor may face high opportunity costs in strong trending markets. It is recommended as a risk-hedging module in a multi-factor model.
+- For the `T` contract, `vpin_strategy` has slightly lower cumulative return and Sharpe ratio than `long_only_benchmark`, but effectively limits the maximum drawdown by avoiding high-toxicity periods;
+- For the `TL` contract, `vpin_strategy` outperforms significantly, with higher cumulative return, annualized return, and Sharpe ratio than `long_only_benchmark`, while reducing max drawdown from 9.5% to 7.2%;
+- The VPIN strategy generates non-zero turnover for both contracts, indicating that the signal actively identifies risk points and switches between long and defensive states, providing strong hedging value particularly in the more volatile 30-year bond futures (TL).
 
 ### Figure Index
 

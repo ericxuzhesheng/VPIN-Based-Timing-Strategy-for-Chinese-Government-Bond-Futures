@@ -15,9 +15,9 @@
 
 ### 项目简介
 
-本项目是一个基于 **VPIN（Volume-Synchronized Probability of Informed Trading）** 的中国国债期货 **CTA 风格纯空头择时框架**。项目使用分钟级交易数据构建订单流毒性指标，并检验 VPIN 对 `T`（10 年国债期货）和 `TL`（30 年国债期货）短周期空头风险识别与直接做空获利的解释力。
+本项目是一个基于 **VPIN（Volume-Synchronized Probability of Informed Trading）** 的中国国债期货 **CTA 风格空头风险择时框架**。项目使用分钟级交易数据构建订单流毒性指标，并检验 VPIN 对 `T`（10 年国债期货）和 `TL`（30 年国债期货）短周期空头风险识别、风险暴露切换与防御择时的解释力。
 
-当前研究逻辑专注于 VPIN 作为**纯空头信号**：当订单流毒性升高且 VPIN 斜率走强时，策略将其视为明确的下行风险信号并建立**期货空头头寸（-1.0 仓位）**；在无信号期间，策略保持**空仓观望（0.0 仓位）**。这种设定旨在验证 VPIN 捕捉“崩盘”或“急跌”风险的能力，而非作为多头组合的辅助工具。
+当前研究逻辑专注于 VPIN：当订单流毒性升高且 VPIN 斜率走强时，策略将其视为潜在的交易性空头/下行风险信号，并从多头暴露切换到空仓防御状态。当前实现是多头 / 空仓版本的 CTA 择时原型，并不直接建立期货空头头寸，也不包含均线、动量、波动率、RSRS、MACD、RSI、布林带等非 VPIN 策略。
 
 ### VPIN 指标解释
 
@@ -40,15 +40,15 @@ $$
 | $V$ | 单个等量桶的固定成交量 |
 | $n$ | 滚动窗口内的等量桶数量 |
 
-在中国国债期货 `T` / `TL` 合约中，VPIN 可以被理解为订单流毒性或交易拥挤程度的代理变量。当 VPIN 快速上升时，可能意味着市场交易方向更加单边，未来短期价格波动或回撤风险上升。因此，本项目使用“高 VPIN + VPIN slope 为正”作为**反手做空**的触发条件。
+在中国国债期货 `T` / `TL` 合约中，VPIN 可以被理解为订单流毒性或交易拥挤程度的代理变量。当 VPIN 快速上升时，可能意味着市场交易方向更加单边，未来短期价格波动或回撤风险上升。因此，本项目使用“高 VPIN + VPIN slope 为正”作为降低多头仓位的风险预警条件。
 
 ### 核心功能
 
 - 分钟级国债期货数据读取与标准化；
 - VPIN 指标计算；
 - 日频 VPIN 特征聚合；
-- VPIN 纯空头择时信号生成（Short vs Flat）；
-- CTA 风格空头择时策略回测；
+- VPIN 空头风险 / 防御择时信号生成；
+- CTA 风格多头 / 空仓切换策略回测；
 - 绩效指标统计；
 - 可视化输出。
 
@@ -60,8 +60,8 @@ $$
 2. 使用价格变化方向或 Bulk Volume Classification 近似拆分买量和卖量；
 3. 计算分钟级 VPIN、VPIN slope、z-score 和 percentile；
 4. 将 VPIN 特征聚合到日频；
-5. 根据日频 VPIN 分位数和斜率生成**空头择时信号**；
-6. 使用日频 close-to-close 收益回测 **Short-only** 策略；
+5. 根据日频 VPIN 分位数和斜率生成空头风险 / 防御择时信号；
+6. 使用日频 close-to-close 收益回测 CTA 风格多头 / 空仓切换策略；
 7. 输出净值、绩效指标和图表。
 
 为避免未来函数，交易仓位使用：
@@ -159,14 +159,14 @@ position = signal_raw.shift(1)
 
 ### 已有回测结果
 
-以下结果来自当前仓库中的 `results/tables/backtest_summary.csv`。请注意：由于 VPIN 仅作为空头信号（触发时做空，否则平仓），其表现与 Long-only 基准存在天然的风险收益特征差异。
+以下结果来自当前仓库中的 `results/tables/backtest_summary.csv`，回测区间均从 **2024-01-01** 开始。
 
 | 合约 | 策略 | 累计收益 | 年化收益 | 年化波动率 | 夏普比率 | 最大回撤 | Calmar | 胜率 | 换手率 |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| T | vpin_strategy | -0.025223 | -0.007926 | 0.009176 | -0.863792 | 0.027370 | -0.289590 | 0.086527 | 0.276885 |
-| T | long_only_benchmark | 0.087254 | 0.026401 | 0.024206 | 1.090678 | 0.022459 | 1.175535 | 0.558714 | 0.000000 |
-| TL | vpin_strategy | 0.005641 | 0.002481 | 0.033707 | 0.073608 | 0.041573 | 0.059681 | 0.075175 | 0.244755 |
-| TL | long_only_benchmark | 0.136246 | 0.057886 | 0.070659 | 0.819232 | 0.095250 | 0.607727 | 0.557692 | 0.000000 |
+| T | vpin_strategy | 0.051687 | 0.023104 | 0.022652 | 1.019954 | 0.026380 | 0.875799 | 0.465827 | 0.273381 |
+| T | long_only_benchmark | 0.058360 | 0.026041 | 0.024506 | 1.062654 | 0.022459 | 1.159514 | 0.552158 | 0.000000 |
+| TL | vpin_strategy | 0.130385 | 0.056805 | 0.062415 | 0.910117 | 0.072508 | 0.783430 | 0.463327 | 0.250447 |
+| TL | long_only_benchmark | 0.121149 | 0.052903 | 0.071131 | 0.743747 | 0.095250 | 0.555418 | 0.556351 | 0.000000 |
 
 ### 结果图表
 
@@ -278,9 +278,9 @@ Current language: English | [切换到中文](#zh)
 
 ### Project Overview
 
-This repository provides a **VPIN (Volume-Synchronized Probability of Informed Trading)** based **CTA-style short-only timing framework** for Chinese government bond futures. It evaluates the explanatory power of VPIN for detecting short-horizon downside risks and generating direct **short-selling profits** in `T` (10-year) and `TL` (30-year) futures.
+This repository provides a **VPIN (Volume-Synchronized Probability of Informed Trading)** based **CTA-style short-risk timing framework** for Chinese government bond futures. It uses minute-level trading data to construct order-flow toxicity indicators and evaluates the explanatory power of VPIN for short-horizon short-risk detection, risk-exposure switching, and defensive timing in `T` 10-year and `TL` 30-year government bond futures.
 
-The current research logic treats VPIN strictly as a **short-only signal**: when order-flow toxicity rises and the VPIN slope strengthens, the strategy opens a **short position (-1.0)**. During periods without signals, the strategy remains **flat (0.0)**. This setup is designed to test VPIN's ability to capture "crashes" or "sharp declines" rather than acting as a defensive filter for a long-only portfolio.
+The current research logic focuses only on VPIN: when order-flow toxicity rises and the VPIN slope strengthens, the strategy treats it as a potential trading-oriented short/downside-risk signal and switches from long exposure to a flat defensive state. The current implementation is a long/flat CTA timing prototype; it does not directly open short futures positions and does not include non-VPIN rules such as moving averages, momentum, volatility filters, RSRS, MACD, RSI, or Bollinger Bands.
 
 ### VPIN Indicator
 
@@ -303,29 +303,29 @@ Where:
 | $V$ | Fixed volume size of each volume bucket |
 | $n$ | Number of volume buckets in the rolling VPIN window |
 
-In this project, high VPIN combined with positive VPIN slope is used as a **short-selling trigger** for Chinese Government Bond Futures. For `T` and `TL`, a rapid VPIN increase is interpreted as a warning that trading flow is becoming more one-sided and that downside risk is imminent.
+In this project, high VPIN combined with positive VPIN slope is used as a defensive timing signal for Chinese Government Bond Futures. For `T` and `TL`, a rapid VPIN increase is interpreted as a warning that trading flow is becoming more one-sided and that short-term volatility or drawdown risk may rise.
 
 ### Core Features
 
 - Minute-level government bond futures data loading and standardization;
 - VPIN indicator calculation;
 - Daily VPIN feature aggregation;
-- VPIN short-only signal generation (Short vs Flat);
-- CTA-style short-only backtesting;
+- VPIN short-risk / defensive timing signal generation;
+- CTA-style long/flat switching strategy backtesting;
 - Performance metric calculation;
 - Visualization output.
 
 ### Methodology
 
-The main script `vpin_timing.py` follows this workflow:
+The main script `vpin_timing.py` uses minute-level data, preferably 5-minute bars, and runs the following workflow:
 
 1. Load and standardize minute-level market data;
-2. Approximate buy/sell volume using price direction or BVC;
-3. Compute intraday VPIN, slope, z-score, and percentile;
-4. Aggregate features to daily frequency;
-5. Generate **short-only signals** from daily VPIN metrics;
-6. Backtest the **Short-only** strategy with daily close-to-close returns;
-7. Export results.
+2. Approximate buy and sell volume using price direction or Bulk Volume Classification;
+3. Compute intraday VPIN, VPIN slope, z-score, and percentile;
+4. Aggregate VPIN features to daily frequency;
+5. Generate short-risk / defensive timing signals from daily VPIN percentile and slope;
+6. Backtest a CTA-style long/flat switching strategy with daily close-to-close returns;
+7. Export NAV series, performance metrics, and figures.
 
 To avoid look-ahead bias, the tradable position is defined as:
 
@@ -422,14 +422,14 @@ Figures:
 
 ### Existing Backtest Results
 
-The following results are from `results/tables/backtest_summary.csv`. Note: As VPIN is used as a short-only signal (short when triggered, flat otherwise), its performance characteristics differ fundamentally from the Long-only benchmark.
+The following results come from the existing `results/tables/backtest_summary.csv` file, with the backtest period starting from **2024-01-01**.
 
 | Contract | Strategy | Cumulative Return | Annualized Return | Annualized Volatility | Sharpe Ratio | Max Drawdown | Calmar | Win Rate | Turnover |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| T | vpin_strategy | -0.025223 | -0.007926 | 0.009176 | -0.863792 | 0.027370 | -0.289590 | 0.086527 | 0.276885 |
-| T | long_only_benchmark | 0.087254 | 0.026401 | 0.024206 | 1.090678 | 0.022459 | 1.175535 | 0.558714 | 0.000000 |
-| TL | vpin_strategy | 0.005641 | 0.002481 | 0.033707 | 0.073608 | 0.041573 | 0.059681 | 0.075175 | 0.244755 |
-| TL | long_only_benchmark | 0.136246 | 0.057886 | 0.070659 | 0.819232 | 0.095250 | 0.607727 | 0.557692 | 0.000000 |
+| T | vpin_strategy | 0.051687 | 0.023104 | 0.022652 | 1.019954 | 0.026380 | 0.875799 | 0.465827 | 0.273381 |
+| T | long_only_benchmark | 0.058360 | 0.026041 | 0.024506 | 1.062654 | 0.022459 | 1.159514 | 0.552158 | 0.000000 |
+| TL | vpin_strategy | 0.130385 | 0.056805 | 0.062415 | 0.910117 | 0.072508 | 0.783430 | 0.463327 | 0.250447 |
+| TL | long_only_benchmark | 0.121149 | 0.052903 | 0.071131 | 0.743747 | 0.095250 | 0.555418 | 0.556351 | 0.000000 |
 
 ### Result Figures
 
