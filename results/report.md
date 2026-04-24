@@ -33,7 +33,7 @@ VPIN 的出发点是：在存在信息不对称的市场中，如果知情交易
 
 #### Volume Buckets 思想
 
-传统高频研究常按日历时间切分样本，例如每 1 分钟或每 5 分钟形成一个 bar。但市场真实交易节奏并不均匀：活跃时段成交密集，清淡时段成交稀疏。VPIN 引入“等量桶”（Volume Buckets）思想，将连续交易按照固定成交量 \(V\) 切分，而不是按照固定时间切分。
+传统高频研究常按日历时间切分样本，例如每 1 分钟或每 5 分钟形成一个 bar。但市场真实交易节奏并不均匀：活跃时段成交密集，清淡时段成交稀疏。VPIN 引入“等量桶”（Volume Buckets）思想，将连续交易按照固定成交量 $V$ 切分，而不是按照固定时间切分。
 
 这种做法的好处是：
 
@@ -49,12 +49,14 @@ $$
 
 其中：
 
-- \(V_{\tau}^{B}\)：第 \(\tau\) 个等量桶内估计的买入成交量；
-- \(V_{\tau}^{S}\)：第 \(\tau\) 个等量桶内估计的卖出成交量；
-- \(V\)：单个等量桶的固定成交量；
-- \(n\)：滚动窗口内的等量桶数量。
+| 符号 | 含义 |
+| --- | --- |
+| $V_{\tau}^{B}$ | 第 $\tau$ 个等量桶内估计的买入成交量 |
+| $V_{\tau}^{S}$ | 第 $\tau$ 个等量桶内估计的卖出成交量 |
+| $V$ | 单个等量桶的固定成交量 |
+| $n$ | 滚动窗口内的等量桶数量 |
 
-公式分子是滚动窗口内各个等量桶买卖成交量差的绝对值之和，刻画累计成交量失衡；分母 \(nV\) 是滚动窗口内总成交量。因此，VPIN 可以理解为滚动成交量窗口内“被买卖失衡解释的成交量比例”。数值越高，说明买卖成交量越不均衡，订单流毒性越强。
+公式分子是滚动窗口内各个等量桶买卖成交量差的绝对值之和，刻画累计成交量失衡；分母 $nV$ 是滚动窗口内总成交量。因此，VPIN 可以理解为滚动成交量窗口内“被买卖失衡解释的成交量比例”。数值越高，说明买卖成交量越不均衡，订单流毒性越强。
 
 #### 金融含义与国债期货语境
 
@@ -266,7 +268,7 @@ The economic intuition is that informed traders tend to trade persistently in th
 
 #### Volume Buckets
 
-Many high-frequency studies sample data by calendar time, such as one-minute or five-minute bars. VPIN instead uses volume buckets: trades are grouped into buckets with a fixed volume size \(V\), rather than fixed clock-time intervals. This volume-synchronized sampling scheme is designed to align the measurement window with the market's actual trading rhythm.
+Many high-frequency studies sample data by calendar time, such as one-minute or five-minute bars. VPIN instead uses volume buckets: trades are grouped into buckets with a fixed volume size $V$, rather than fixed clock-time intervals. This volume-synchronized sampling scheme is designed to align the measurement window with the market's actual trading rhythm.
 
 The volume-bucket approach has several advantages:
 
@@ -282,12 +284,14 @@ $$
 
 Where:
 
-- \(V_{\tau}^{B}\) is the estimated buy volume in volume bucket \(\tau\);
-- \(V_{\tau}^{S}\) is the estimated sell volume in volume bucket \(\tau\);
-- \(V\) is the fixed volume size of each bucket;
-- \(n\) is the number of buckets in the rolling VPIN window.
+| Symbol | Definition |
+| --- | --- |
+| $V_{\tau}^{B}$ | Estimated buy volume in volume bucket $\tau$ |
+| $V_{\tau}^{S}$ | Estimated sell volume in volume bucket $\tau$ |
+| $V$ | Fixed volume size of each volume bucket |
+| $n$ | Number of volume buckets in the rolling VPIN window |
 
-The numerator sums the absolute buy-sell volume imbalance across rolling volume buckets, while the denominator \(nV\) is the total volume in the rolling window. VPIN can therefore be read as the share of recent trading volume explained by directional volume imbalance. A higher value indicates stronger order-flow toxicity and potentially worse liquidity conditions.
+The numerator sums the absolute buy-sell volume imbalance across rolling volume buckets, while the denominator $nV$ is the total volume in the rolling window. VPIN can therefore be read as the share of recent trading volume explained by directional volume imbalance. A higher value indicates stronger order-flow toxicity and potentially worse liquidity conditions.
 
 #### Interpretation for Chinese Government Bond Futures
 

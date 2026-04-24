@@ -33,10 +33,12 @@ $$
 
 其中：
 
-- \(V_{\tau}^{B}\)：第 \(\tau\) 个等量桶内估计的买入成交量；
-- \(V_{\tau}^{S}\)：第 \(\tau\) 个等量桶内估计的卖出成交量；
-- \(V\)：单个等量桶的固定成交量；
-- \(n\)：滚动窗口内的等量桶数量。
+| 符号 | 含义 |
+| --- | --- |
+| $V_{\tau}^{B}$ | 第 $\tau$ 个等量桶内估计的买入成交量 |
+| $V_{\tau}^{S}$ | 第 $\tau$ 个等量桶内估计的卖出成交量 |
+| $V$ | 单个等量桶的固定成交量 |
+| $n$ | 滚动窗口内的等量桶数量 |
 
 在中国国债期货 `T` / `TL` 合约中，VPIN 可以被理解为订单流毒性或交易拥挤程度的代理变量。当 VPIN 快速上升时，可能意味着市场交易方向更加单边，未来短期价格波动或回撤风险上升。因此，本项目使用“高 VPIN + VPIN slope 为正”作为降低多头仓位的风险预警条件。
 
@@ -294,10 +296,12 @@ $$
 
 Where:
 
-- \(V_{\tau}^{B}\) is the estimated buy volume in volume bucket \(\tau\);
-- \(V_{\tau}^{S}\) is the estimated sell volume in volume bucket \(\tau\);
-- \(V\) is the fixed volume size of each bucket;
-- \(n\) is the number of buckets in the rolling VPIN window.
+| Symbol | Definition |
+| --- | --- |
+| $V_{\tau}^{B}$ | Estimated buy volume in volume bucket $\tau$ |
+| $V_{\tau}^{S}$ | Estimated sell volume in volume bucket $\tau$ |
+| $V$ | Fixed volume size of each volume bucket |
+| $n$ | Number of volume buckets in the rolling VPIN window |
 
 In this project, high VPIN combined with positive VPIN slope is used as a defensive timing signal for Chinese Government Bond Futures. For `T` and `TL`, a rapid VPIN increase is interpreted as a warning that trading flow is becoming more one-sided and that short-term volatility or drawdown risk may rise.
 
