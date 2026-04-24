@@ -25,6 +25,43 @@
 2. VPIN 及其日频聚合特征是否能捕捉流动性压力或信息不对称变化；
 3. 基于 VPIN 分位数和斜率构造的防御信号，是否能改善不同期限国债期货的回撤或风险收益特征。
 
+### VPIN 指标解释
+
+VPIN = **Volume-Synchronized Probability of Informed Trading**，通常译为知情交易概率。该指标由 David Easley、Maureen O'Hara 以及 Marcos M. López de Prado 等在市场微观结构研究中提出，核心目标是刻画订单流毒性（Order Flow Toxicity）、流动性枯竭风险以及市场微观结构状态恶化。
+
+VPIN 的出发点是：在存在信息不对称的市场中，如果知情交易者持续沿同一方向交易，做市商或流动性提供者会承受更高的逆向选择风险。此时，买卖成交量的不平衡会累积，市场流动性可能下降，价格也更容易出现跳变或短期剧烈波动。
+
+#### Volume Buckets 思想
+
+传统高频研究常按日历时间切分样本，例如每 1 分钟或每 5 分钟形成一个 bar。但市场真实交易节奏并不均匀：活跃时段成交密集，清淡时段成交稀疏。VPIN 引入“等量桶”（Volume Buckets）思想，将连续交易按照固定成交量 \(V\) 切分，而不是按照固定时间切分。
+
+这种做法的好处是：
+
+- 每个桶包含相近规模的成交量，更接近真实交易节奏；
+- 可以弱化高频数据中的波动率聚集与交易强度不均匀问题；
+- 便于在滚动成交量窗口中观察买卖失衡是否持续累积。
+
+#### 标准公式
+
+$$
+VPIN = \frac{\sum_{\tau=1}^{n} |V_{\tau}^{S} - V_{\tau}^{B}|}{nV}
+$$
+
+其中：
+
+- \(V_{\tau}^{B}\)：第 \(\tau\) 个等量桶内估计的买入成交量；
+- \(V_{\tau}^{S}\)：第 \(\tau\) 个等量桶内估计的卖出成交量；
+- \(V\)：单个等量桶的固定成交量；
+- \(n\)：滚动窗口内的等量桶数量。
+
+公式分子是滚动窗口内各个等量桶买卖成交量差的绝对值之和，刻画累计成交量失衡；分母 \(nV\) 是滚动窗口内总成交量。因此，VPIN 可以理解为滚动成交量窗口内“被买卖失衡解释的成交量比例”。数值越高，说明买卖成交量越不均衡，订单流毒性越强。
+
+#### 金融含义与国债期货语境
+
+在中国国债期货 `T` / `TL` 合约中，VPIN 可以被理解为订单流毒性、交易拥挤程度或潜在流动性压力的代理变量。当 VPIN 快速上升时，可能意味着市场交易方向更加单边，流动性提供者面对更高逆向选择风险，未来短期价格波动或回撤风险可能上升。
+
+本项目将 VPIN 聚合到日频，并观察 `daily_vpin_percentile` 与 `daily_vpin_slope`：当 VPIN 处于较高分位且斜率为正时，策略将其解释为订单流毒性正在上升，并触发降低多头仓位的防御条件。当前实现采用多头 / 空仓切换，而不是直接建立空头头寸。
+
 ### 数据与输入
 
 当前仓库默认使用以下本地分钟级数据文件：
@@ -220,6 +257,43 @@ The project evaluates whether **VPIN (Volume-Synchronized Probability of Informe
 1. Whether minute-level trading data can be standardized reliably for order-flow toxicity estimation;
 2. Whether VPIN and its daily aggregated features capture liquidity pressure or information asymmetry;
 3. Whether a defensive timing signal based on VPIN percentile and slope can improve drawdown or risk-adjusted performance across different government bond futures tenors.
+
+### VPIN Indicator Interpretation
+
+VPIN stands for **Volume-Synchronized Probability of Informed Trading**. It was proposed by David Easley, Maureen O'Hara, Marcos M. López de Prado and co-authors in the market microstructure literature to measure order-flow toxicity, liquidity-stress risk, and deterioration in market microstructure conditions.
+
+The economic intuition is that informed traders tend to trade persistently in the direction of their private information. When this happens, liquidity providers face higher adverse-selection risk. Persistent buy-sell imbalance can therefore signal that liquidity is becoming more fragile and that prices may be more vulnerable to jumps or short-term volatility bursts.
+
+#### Volume Buckets
+
+Many high-frequency studies sample data by calendar time, such as one-minute or five-minute bars. VPIN instead uses volume buckets: trades are grouped into buckets with a fixed volume size \(V\), rather than fixed clock-time intervals. This volume-synchronized sampling scheme is designed to align the measurement window with the market's actual trading rhythm.
+
+The volume-bucket approach has several advantages:
+
+- each bucket contains a comparable amount of traded volume;
+- the measurement is less dominated by uneven trading intensity across the day;
+- rolling windows can track whether buy-sell imbalance is accumulating across comparable volume units.
+
+#### Standard Formula
+
+$$
+VPIN = \frac{\sum_{\tau=1}^{n} |V_{\tau}^{S} - V_{\tau}^{B}|}{nV}
+$$
+
+Where:
+
+- \(V_{\tau}^{B}\) is the estimated buy volume in volume bucket \(\tau\);
+- \(V_{\tau}^{S}\) is the estimated sell volume in volume bucket \(\tau\);
+- \(V\) is the fixed volume size of each bucket;
+- \(n\) is the number of buckets in the rolling VPIN window.
+
+The numerator sums the absolute buy-sell volume imbalance across rolling volume buckets, while the denominator \(nV\) is the total volume in the rolling window. VPIN can therefore be read as the share of recent trading volume explained by directional volume imbalance. A higher value indicates stronger order-flow toxicity and potentially worse liquidity conditions.
+
+#### Interpretation for Chinese Government Bond Futures
+
+For Chinese Government Bond Futures `T` and `TL`, VPIN is used as a proxy for order-flow toxicity, trading crowding, and potential liquidity pressure. A rapid increase in VPIN may suggest that trading has become more one-sided and that short-term volatility or drawdown risk is rising.
+
+This project aggregates VPIN to daily frequency and monitors both `daily_vpin_percentile` and `daily_vpin_slope`. When VPIN is in a high percentile and its slope is positive, the strategy interprets the signal as rising order-flow toxicity and reduces long exposure defensively. The current implementation uses a long/flat switch rather than opening explicit short futures positions.
 
 ### Data and Inputs
 
