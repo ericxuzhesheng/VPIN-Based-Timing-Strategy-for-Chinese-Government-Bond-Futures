@@ -15,17 +15,17 @@
 
 ### 项目简介
 
-本项目是一个基于 **VPIN（Volume-Synchronized Probability of Informed Trading）** 的中国国债期货择时研究框架。项目使用分钟级交易数据构建订单流毒性指标，并检验 VPIN 对 `T`（10 年国债期货）和 `TL`（30 年国债期货）短周期择时的解释力。
+本项目是一个基于 **VPIN（Volume-Synchronized Probability of Informed Trading）** 的中国国债期货 **CTA 风格空头风险择时框架**。项目使用分钟级交易数据构建订单流毒性指标，并检验 VPIN 对 `T`（10 年国债期货）和 `TL`（30 年国债期货）短周期空头风险识别、风险暴露切换与防御择时的解释力。
 
-当前研究逻辑专注于 VPIN，不包含均线、动量、波动率、RSRS、MACD、RSI、布林带等非 VPIN 策略。
+当前研究逻辑专注于 VPIN：当订单流毒性升高且 VPIN 斜率走强时，策略将其视为潜在的交易性空头/下行风险信号，并从多头暴露切换到空仓防御状态。当前实现是多头 / 空仓版本的 CTA 择时原型，并不直接建立期货空头头寸，也不包含均线、动量、波动率、RSRS、MACD、RSI、布林带等非 VPIN 策略。
 
 ### 核心功能
 
 - 分钟级国债期货数据读取与标准化；
 - VPIN 指标计算；
 - 日频 VPIN 特征聚合；
-- VPIN 择时信号生成；
-- 策略回测；
+- VPIN 空头风险 / 防御择时信号生成；
+- CTA 风格多头 / 空仓切换策略回测；
 - 绩效指标统计；
 - 可视化输出。
 
@@ -37,8 +37,8 @@
 2. 使用价格变化方向或 Bulk Volume Classification 近似拆分买量和卖量；
 3. 计算分钟级 VPIN、VPIN slope、z-score 和 percentile；
 4. 将 VPIN 特征聚合到日频；
-5. 根据日频 VPIN 分位数和斜率生成择时信号；
-6. 使用日频 close-to-close 收益进行回测；
+5. 根据日频 VPIN 分位数和斜率生成空头风险 / 防御择时信号；
+6. 使用日频 close-to-close 收益回测 CTA 风格多头 / 空仓切换策略；
 7. 输出净值、绩效指标和图表。
 
 为避免未来函数，交易仓位使用：
@@ -55,6 +55,7 @@ position = signal_raw.shift(1)
 
 ```text
 .
+├── LICENSE
 ├── README.md
 ├── vpin_timing.py
 ├── 10年国债期货_5min_3年.xlsx
@@ -87,7 +88,8 @@ position = signal_raw.shift(1)
 - 当前仓库未发现 `scripts/` 目录；
 - 当前仓库未发现 `requirements.txt`；
 - `data/processed/`、`results/tables/` 和 `results/figures/` 中的文件为当前已有 pipeline 输出；
-- `results/report.md` 是本次新增的正式双语研究报告。
+- `results/report.md` 是正式双语研究报告；
+- `LICENSE` 声明本项目采用 MIT 协议。
 
 ### 输入数据格式
 
@@ -253,17 +255,17 @@ Current language: English | [切换到中文](#zh)
 
 ### Project Overview
 
-This repository provides a **VPIN (Volume-Synchronized Probability of Informed Trading)** research framework for timing Chinese government bond futures. It uses minute-level trading data to construct order-flow toxicity indicators and evaluates the explanatory power of VPIN for short-horizon timing in `T` 10-year and `TL` 30-year government bond futures.
+This repository provides a **VPIN (Volume-Synchronized Probability of Informed Trading)** based **CTA-style short-risk timing framework** for Chinese government bond futures. It uses minute-level trading data to construct order-flow toxicity indicators and evaluates the explanatory power of VPIN for short-horizon short-risk detection, risk-exposure switching, and defensive timing in `T` 10-year and `TL` 30-year government bond futures.
 
-The current research logic focuses only on VPIN and does not include non-VPIN rules such as moving averages, momentum, volatility filters, RSRS, MACD, RSI, or Bollinger Bands.
+The current research logic focuses only on VPIN: when order-flow toxicity rises and the VPIN slope strengthens, the strategy treats it as a potential trading-oriented short/downside-risk signal and switches from long exposure to a flat defensive state. The current implementation is a long/flat CTA timing prototype; it does not directly open short futures positions and does not include non-VPIN rules such as moving averages, momentum, volatility filters, RSRS, MACD, RSI, or Bollinger Bands.
 
 ### Core Features
 
 - Minute-level government bond futures data loading and standardization;
 - VPIN indicator calculation;
 - Daily VPIN feature aggregation;
-- VPIN timing signal generation;
-- Strategy backtesting;
+- VPIN short-risk / defensive timing signal generation;
+- CTA-style long/flat switching strategy backtesting;
 - Performance metric calculation;
 - Visualization output.
 
@@ -275,8 +277,8 @@ The main script `vpin_timing.py` uses minute-level data, preferably 5-minute bar
 2. Approximate buy and sell volume using price direction or Bulk Volume Classification;
 3. Compute intraday VPIN, VPIN slope, z-score, and percentile;
 4. Aggregate VPIN features to daily frequency;
-5. Generate timing signals from daily VPIN percentile and slope;
-6. Backtest with daily close-to-close returns;
+5. Generate short-risk / defensive timing signals from daily VPIN percentile and slope;
+6. Backtest a CTA-style long/flat switching strategy with daily close-to-close returns;
 7. Export NAV series, performance metrics, and figures.
 
 To avoid look-ahead bias, the tradable position is defined as:
@@ -293,6 +295,7 @@ The repository structure below reflects the actual inspected files:
 
 ```text
 .
+├── LICENSE
 ├── README.md
 ├── vpin_timing.py
 ├── 10年国债期货_5min_3年.xlsx
@@ -325,7 +328,8 @@ Notes:
 - No `scripts/` directory was found in the current repository;
 - No `requirements.txt` file was found in the current repository;
 - Files under `data/processed/`, `results/tables/`, and `results/figures/` are existing pipeline outputs;
-- `results/report.md` is the newly added formal bilingual research report.
+- `results/report.md` is the formal bilingual research report;
+- `LICENSE` declares that this project is released under the MIT License.
 
 ### Input Data Schema
 
