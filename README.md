@@ -5,6 +5,12 @@
   <a href="#en"><img src="https://img.shields.io/badge/LANGUAGE-ENGLISH-2F73C9?style=for-the-badge&labelColor=3B3F47" alt="LANGUAGE ENGLISH"></a>
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.8+">
+  <img src="https://img.shields.io/badge/Asset-CGB%20Futures-F2C94C?style=for-the-badge" alt="CGB Futures">
+  <img src="https://img.shields.io/badge/Strategy-VPIN%20Timing-7AC943?style=for-the-badge" alt="VPIN Timing">
+</p>
+
 <a id="zh"></a>
 
 ## 简体中文
