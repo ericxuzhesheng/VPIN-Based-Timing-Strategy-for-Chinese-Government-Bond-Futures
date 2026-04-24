@@ -466,3 +466,9 @@ python vpin_timing.py --contract T --input data/raw/T_5min.csv
 2. The current strategy is a simple long-versus-defensive model and has not yet been tested with parameter grid search, out-of-sample validation, or portfolio-level optimization;
 3. Exchange fees, slippage, and market impact are not separately modeled unless `--transaction-cost` is explicitly set when running the script;
 4. Future extensions can include rolling-window validation, parameter stability analysis, cross-instrument portfolios, and risk-budget constraints.
+
+### References
+
+1.  **Easley, D., López de Prado, M. M., & O'Hara, M. (2012).** "Flow Toxicity and Liquidity in a High-Frequency World." *The Review of Financial Studies*, 25(5), 1457-1493. (See `report/Flow Toxicity and Liquidity in a High-Frequency World.pdf`)
+2.  **Easley, D., López de Prado, M. M., & O'Hara, M. (2012).** "The Volume Clock: Insights into the High-Frequency Paradigm." *The Journal of Portfolio Management*, 39(1), 19-29. (See `report/The Volume Clock Insights into the High-Frequency Paradigm.pdf`)
+budget constraints.

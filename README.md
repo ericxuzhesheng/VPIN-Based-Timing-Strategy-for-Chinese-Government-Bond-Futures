@@ -528,3 +528,10 @@ python vpin_timing.py --start-date 2024-01-01 --output-dir results --processed-d
 - `--signal-percentile-threshold`: high-VPIN percentile threshold
 - `--signal-slope-threshold`: VPIN slope threshold
 - `--transaction-cost`: one-way transaction cost applied to turnover
+
+### References
+
+The core VPIN theory in this project is based on the following academic literature (corresponding to the PDF reports in the `report/` directory):
+
+1.  **Easley, D., López de Prado, M. M., & O'Hara, M. (2012).** "Flow Toxicity and Liquidity in a High-Frequency World." *The Review of Financial Studies*, 25(5), 1457-1493.
+2.  **Easley, D., López de Prado, M. M., & O'Hara, M. (2012).** "The Volume Clock: Insights into the High-Frequency Paradigm." *The Journal of Portfolio Management*, 39(1), 19-29.

@@ -1,3 +1,16 @@
+"""
+VPIN (Volume-Synchronized Probability of Informed Trading) Timing Strategy for Chinese Government Bond Futures.
+
+This script implements the VPIN indicator to detect order-flow toxicity and generates
+defensive timing signals for T (10Y) and TL (30Y) bond futures.
+
+References:
+- Easley, D., López de Prado, M. M., & O'Hara, M. (2012). Flow Toxicity and Liquidity 
+  in a High-Frequency World. The Review of Financial Studies, 25(5), 1457-1493.
+- Easley, D., López de Prado, M. M., & O'Hara, M. (2012). The Volume Clock: Insights 
+  into the High-Frequency Paradigm. The Journal of Portfolio Management, 39(1), 19-29.
+"""
+
 from __future__ import annotations
 
 import argparse
