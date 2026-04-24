@@ -1,0 +1,428 @@
+# 基于 VPIN 的中国国债期货择时框架 | VPIN-Based Timing Strategy for Chinese Government Bond Futures
+
+<p align="center">
+  <a href="#zh"><img src="https://img.shields.io/badge/LANGUAGE-%E4%B8%AD%E6%96%87-E84D3D?style=for-the-badge&labelColor=3B3F47" alt="LANGUAGE 中文"></a>
+  <a href="#en"><img src="https://img.shields.io/badge/LANGUAGE-ENGLISH-2F73C9?style=for-the-badge&labelColor=3B3F47" alt="LANGUAGE ENGLISH"></a>
+</p>
+
+<a id="zh"></a>
+
+## 简体中文
+
+当前语言：中文 | [Switch to English](#en)
+
+---
+
+### 项目简介
+
+本项目是一个基于 **VPIN（Volume-Synchronized Probability of Informed Trading）** 的中国国债期货择时研究框架。项目使用分钟级交易数据构建订单流毒性指标，并检验 VPIN 对 `T`（10 年国债期货）和 `TL`（30 年国债期货）短周期择时的解释力。
+
+当前研究逻辑专注于 VPIN，不包含均线、动量、波动率、RSRS、MACD、RSI、布林带等非 VPIN 策略。
+
+### 核心功能
+
+- 分钟级国债期货数据读取与标准化；
+- VPIN 指标计算；
+- 日频 VPIN 特征聚合；
+- VPIN 择时信号生成；
+- 策略回测；
+- 绩效指标统计；
+- 可视化输出。
+
+### 方法框架
+
+主脚本 `vpin_timing.py` 使用分钟级数据（优先 5 分钟）完成以下流程：
+
+1. 读取并标准化分钟级行情数据；
+2. 使用价格变化方向或 Bulk Volume Classification 近似拆分买量和卖量；
+3. 计算分钟级 VPIN、VPIN slope、z-score 和 percentile；
+4. 将 VPIN 特征聚合到日频；
+5. 根据日频 VPIN 分位数和斜率生成择时信号；
+6. 使用日频 close-to-close 收益进行回测；
+7. 输出净值、绩效指标和图表。
+
+为避免未来函数，交易仓位使用：
+
+```python
+position = signal_raw.shift(1)
+```
+
+即所有信号严格滞后 1 个交易日执行。
+
+### 仓库结构
+
+当前仓库结构以实际文件为准：
+
+```text
+.
+├── README.md
+├── vpin_timing.py
+├── 10年国债期货_5min_3年.xlsx
+├── 30年国债期货_5min_2年.xlsx
+├── data/
+│   └── processed/
+│       ├── vpin_intraday.csv
+│       └── vpin_daily.csv
+├── results/
+│   ├── report.md
+│   ├── tables/
+│   │   ├── backtest_summary.csv
+│   │   └── strategy_nav.csv
+│   └── figures/
+│       ├── t_price_vs_vpin.png
+│       ├── t_vpin_slope_vs_return.png
+│       ├── t_strategy_nav_vs_benchmark.png
+│       ├── t_drawdown_comparison.png
+│       ├── tl_price_vs_vpin.png
+│       ├── tl_vpin_slope_vs_return.png
+│       ├── tl_strategy_nav_vs_benchmark.png
+│       └── tl_drawdown_comparison.png
+└── report/
+    └── *.pdf
+```
+
+说明：
+
+- 当前仓库未发现 `src/` 目录；
+- 当前仓库未发现 `scripts/` 目录；
+- 当前仓库未发现 `requirements.txt`；
+- `data/processed/`、`results/tables/` 和 `results/figures/` 中的文件为当前已有 pipeline 输出；
+- `results/report.md` 是本次新增的正式双语研究报告。
+
+### 输入数据格式
+
+输入文件支持 `csv`、`xls`、`xlsx`，标准字段为：
+
+- `datetime`
+- `open`
+- `high`
+- `low`
+- `close`
+- `volume`
+- `open_interest`
+
+脚本兼容以下常见别名：
+
+- `time` / `date` / `timestamp` / `时间` → `datetime`
+- `oi` / `持仓量` → `open_interest`
+- `vol` / `成交量` → `volume`
+
+仓库默认输入文件：
+
+- `10年国债期货_5min_3年.xlsx`
+- `30年国债期货_5min_2年.xlsx`
+
+### 输出文件
+
+表格输出：
+
+- `data/processed/vpin_intraday.csv`
+- `data/processed/vpin_daily.csv`
+- `results/tables/backtest_summary.csv`
+- `results/tables/strategy_nav.csv`
+
+图表输出：
+
+- `results/figures/t_price_vs_vpin.png`
+- `results/figures/t_vpin_slope_vs_return.png`
+- `results/figures/t_strategy_nav_vs_benchmark.png`
+- `results/figures/t_drawdown_comparison.png`
+- `results/figures/tl_price_vs_vpin.png`
+- `results/figures/tl_vpin_slope_vs_return.png`
+- `results/figures/tl_strategy_nav_vs_benchmark.png`
+- `results/figures/tl_drawdown_comparison.png`
+
+### 已有回测结果
+
+以下结果来自当前仓库中的 `results/tables/backtest_summary.csv`，未额外推断或编造。
+
+| 合约 | 策略 | 累计收益 | 年化收益 | 年化波动率 | 夏普比率 | 最大回撤 | Calmar | 胜率 | 换手率 |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| T | long_only_benchmark | 0.088304 | 0.026710 | 0.024207 | 1.103373 | 0.022459 | 1.189279 | 0.559951 | 0.000000 |
+| T | vpin_strategy | 0.061142 | 0.018658 | 0.022427 | 0.831940 | 0.026380 | 0.707262 | 0.463535 | 0.276885 |
+| TL | long_only_benchmark | 0.136346 | 0.058031 | 0.070550 | 0.822552 | 0.095250 | 0.609252 | 0.558669 | 0.000000 |
+| TL | vpin_strategy | 0.145706 | 0.061869 | 0.061949 | 0.998711 | 0.072508 | 0.853273 | 0.467601 | 0.245184 |
+
+### 快速开始
+
+克隆仓库：
+
+```bash
+git clone https://github.com/ericxuzhesheng/VPIN-Based-Timing-Strategy-for-Chinese-Government-Bond-Futures.git
+cd VPIN-Based-Timing-Strategy-for-Chinese-Government-Bond-Futures
+```
+
+安装依赖：
+
+```bash
+pip install pandas numpy matplotlib openpyxl scipy
+```
+
+准备数据：
+
+- 使用仓库默认 Excel 文件：`10年国债期货_5min_3年.xlsx` 和 `30年国债期货_5min_2年.xlsx`；或
+- 准备自定义分钟级数据文件，并确保包含可被标准化为 `datetime`、`open`、`high`、`low`、`close`、`volume` 的字段。
+
+运行完整 pipeline：
+
+```bash
+python vpin_timing.py
+```
+
+### 运行命令
+
+运行两个合约：
+
+```bash
+python vpin_timing.py
+```
+
+仅运行 `T`：
+
+```bash
+python vpin_timing.py --contract T
+```
+
+仅运行 `TL`：
+
+```bash
+python vpin_timing.py --contract TL
+```
+
+指定自定义输入文件：
+
+```bash
+python vpin_timing.py --contract T --input data/raw/T_5min.csv
+```
+
+指定起始日期和输出目录：
+
+```bash
+python vpin_timing.py --start-date 2024-01-01 --output-dir results --processed-dir data/processed
+```
+
+### 主要参数
+
+- `--classification-method`：`bvc` 或 `tick`
+- `--classification-window`：BVC 波动率缩放窗口
+- `--vpin-window`：VPIN 滚动窗口
+- `--slope-window`：分钟级 VPIN slope 窗口
+- `--zscore-window`：分钟级 VPIN z-score 窗口
+- `--percentile-window`：分钟级 VPIN percentile 窗口
+- `--daily-slope-window`：日频 VPIN slope 窗口
+- `--daily-stats-window`：日频 z-score / percentile 窗口
+- `--signal-percentile-threshold`：高 VPIN 分位阈值
+- `--signal-slope-threshold`：VPIN slope 阈值
+- `--transaction-cost`：按换手施加的单边交易成本
+
+---
+
+<a id="en"></a>
+
+## English
+
+Current language: English | [切换到中文](#zh)
+
+---
+
+### Project Overview
+
+This repository provides a **VPIN (Volume-Synchronized Probability of Informed Trading)** research framework for timing Chinese government bond futures. It uses minute-level trading data to construct order-flow toxicity indicators and evaluates the explanatory power of VPIN for short-horizon timing in `T` 10-year and `TL` 30-year government bond futures.
+
+The current research logic focuses only on VPIN and does not include non-VPIN rules such as moving averages, momentum, volatility filters, RSRS, MACD, RSI, or Bollinger Bands.
+
+### Core Features
+
+- Minute-level government bond futures data loading and standardization;
+- VPIN indicator calculation;
+- Daily VPIN feature aggregation;
+- VPIN timing signal generation;
+- Strategy backtesting;
+- Performance metric calculation;
+- Visualization output.
+
+### Methodology
+
+The main script `vpin_timing.py` uses minute-level data, preferably 5-minute bars, and runs the following workflow:
+
+1. Load and standardize minute-level market data;
+2. Approximate buy and sell volume using price direction or Bulk Volume Classification;
+3. Compute intraday VPIN, VPIN slope, z-score, and percentile;
+4. Aggregate VPIN features to daily frequency;
+5. Generate timing signals from daily VPIN percentile and slope;
+6. Backtest with daily close-to-close returns;
+7. Export NAV series, performance metrics, and figures.
+
+To avoid look-ahead bias, the tradable position is defined as:
+
+```python
+position = signal_raw.shift(1)
+```
+
+Therefore, every signal is executed with a strict one-trading-day lag.
+
+### Repository Structure
+
+The repository structure below reflects the actual inspected files:
+
+```text
+.
+├── README.md
+├── vpin_timing.py
+├── 10年国债期货_5min_3年.xlsx
+├── 30年国债期货_5min_2年.xlsx
+├── data/
+│   └── processed/
+│       ├── vpin_intraday.csv
+│       └── vpin_daily.csv
+├── results/
+│   ├── report.md
+│   ├── tables/
+│   │   ├── backtest_summary.csv
+│   │   └── strategy_nav.csv
+│   └── figures/
+│       ├── t_price_vs_vpin.png
+│       ├── t_vpin_slope_vs_return.png
+│       ├── t_strategy_nav_vs_benchmark.png
+│       ├── t_drawdown_comparison.png
+│       ├── tl_price_vs_vpin.png
+│       ├── tl_vpin_slope_vs_return.png
+│       ├── tl_strategy_nav_vs_benchmark.png
+│       └── tl_drawdown_comparison.png
+└── report/
+    └── *.pdf
+```
+
+Notes:
+
+- No `src/` directory was found in the current repository;
+- No `scripts/` directory was found in the current repository;
+- No `requirements.txt` file was found in the current repository;
+- Files under `data/processed/`, `results/tables/`, and `results/figures/` are existing pipeline outputs;
+- `results/report.md` is the newly added formal bilingual research report.
+
+### Input Data Schema
+
+Supported input formats are `csv`, `xls`, and `xlsx`. The standardized columns are:
+
+- `datetime`
+- `open`
+- `high`
+- `low`
+- `close`
+- `volume`
+- `open_interest`
+
+Common aliases are supported automatically:
+
+- `time` / `date` / `timestamp` / `时间` → `datetime`
+- `oi` / `持仓量` → `open_interest`
+- `vol` / `成交量` → `volume`
+
+Default local input files:
+
+- `10年国债期货_5min_3年.xlsx`
+- `30年国债期货_5min_2年.xlsx`
+
+### Output Files
+
+Tables:
+
+- `data/processed/vpin_intraday.csv`
+- `data/processed/vpin_daily.csv`
+- `results/tables/backtest_summary.csv`
+- `results/tables/strategy_nav.csv`
+
+Figures:
+
+- `results/figures/t_price_vs_vpin.png`
+- `results/figures/t_vpin_slope_vs_return.png`
+- `results/figures/t_strategy_nav_vs_benchmark.png`
+- `results/figures/t_drawdown_comparison.png`
+- `results/figures/tl_price_vs_vpin.png`
+- `results/figures/tl_vpin_slope_vs_return.png`
+- `results/figures/tl_strategy_nav_vs_benchmark.png`
+- `results/figures/tl_drawdown_comparison.png`
+
+### Existing Backtest Results
+
+The following results come from the existing `results/tables/backtest_summary.csv` file. No additional performance numbers are inferred or fabricated.
+
+| Contract | Strategy | Cumulative Return | Annualized Return | Annualized Volatility | Sharpe Ratio | Max Drawdown | Calmar | Win Rate | Turnover |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| T | long_only_benchmark | 0.088304 | 0.026710 | 0.024207 | 1.103373 | 0.022459 | 1.189279 | 0.559951 | 0.000000 |
+| T | vpin_strategy | 0.061142 | 0.018658 | 0.022427 | 0.831940 | 0.026380 | 0.707262 | 0.463535 | 0.276885 |
+| TL | long_only_benchmark | 0.136346 | 0.058031 | 0.070550 | 0.822552 | 0.095250 | 0.609252 | 0.558669 | 0.000000 |
+| TL | vpin_strategy | 0.145706 | 0.061869 | 0.061949 | 0.998711 | 0.072508 | 0.853273 | 0.467601 | 0.245184 |
+
+### Quick Start
+
+Clone the repository:
+
+```bash
+git clone https://github.com/ericxuzhesheng/VPIN-Based-Timing-Strategy-for-Chinese-Government-Bond-Futures.git
+cd VPIN-Based-Timing-Strategy-for-Chinese-Government-Bond-Futures
+```
+
+Install dependencies:
+
+```bash
+pip install pandas numpy matplotlib openpyxl scipy
+```
+
+Prepare data:
+
+- Use the default Excel files: `10年国债期货_5min_3年.xlsx` and `30年国债期货_5min_2年.xlsx`; or
+- Prepare a custom minute-level data file with fields that can be standardized to `datetime`, `open`, `high`, `low`, `close`, and `volume`.
+
+Run the full pipeline:
+
+```bash
+python vpin_timing.py
+```
+
+### Run Commands
+
+Run both contracts:
+
+```bash
+python vpin_timing.py
+```
+
+Run only `T`:
+
+```bash
+python vpin_timing.py --contract T
+```
+
+Run only `TL`:
+
+```bash
+python vpin_timing.py --contract TL
+```
+
+Use a custom input file:
+
+```bash
+python vpin_timing.py --contract T --input data/raw/T_5min.csv
+```
+
+Specify a start date and output directories:
+
+```bash
+python vpin_timing.py --start-date 2024-01-01 --output-dir results --processed-dir data/processed
+```
+
+### Key Parameters
+
+- `--classification-method`: `bvc` or `tick`
+- `--classification-window`: BVC volatility scaling window
+- `--vpin-window`: VPIN rolling window
+- `--slope-window`: intraday VPIN slope window
+- `--zscore-window`: intraday VPIN z-score window
+- `--percentile-window`: intraday VPIN percentile window
+- `--daily-slope-window`: daily VPIN slope window
+- `--daily-stats-window`: daily z-score / percentile window
+- `--signal-percentile-threshold`: high-VPIN percentile threshold
+- `--signal-slope-threshold`: VPIN slope threshold
+- `--transaction-cost`: one-way transaction cost applied to turnover

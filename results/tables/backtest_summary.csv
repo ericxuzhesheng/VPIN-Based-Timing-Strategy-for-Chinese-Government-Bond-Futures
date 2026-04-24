@@ -1,0 +1,5 @@
+contract,strategy,cumulative_return,annualized_return,annualized_volatility,sharpe_ratio,max_drawdown,calmar_ratio,win_rate,turnover
+T,long_only_benchmark,0.088304,0.02671,0.024207,1.103373,0.022459,1.189279,0.559951,0.0
+T,vpin_strategy,0.061142,0.018658,0.022427,0.83194,0.02638,0.707262,0.463535,0.276885
+TL,long_only_benchmark,0.136346,0.058031,0.07055,0.822552,0.09525,0.609252,0.558669,0.0
+TL,vpin_strategy,0.145706,0.061869,0.061949,0.998711,0.072508,0.853273,0.467601,0.245184
