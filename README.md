@@ -537,7 +537,15 @@ python vpin_timing.py --start-date 2024-01-01 --output-dir results --processed-d
 
 ### References
 
-The core VPIN theory in this project is based on the following academic literature (corresponding to the PDF reports in the `report/` directory):
+The core VPIN theory and implementation in this project are based on the following academic literature and research reports (see `report/` directory):
 
+**Foundational Theory:**
 1.  **Easley, D., López de Prado, M. M., & O'Hara, M. (2012).** "Flow Toxicity and Liquidity in a High-Frequency World." *The Review of Financial Studies*, 25(5), 1457-1493.
 2.  **Easley, D., López de Prado, M. M., & O'Hara, M. (2012).** "The Volume Clock: Insights into the High-Frequency Paradigm." *The Journal of Portfolio Management*, 39(1), 19-29.
+
+**Industry Practice (Chinese):**
+1.  **Haitong Securities (2020).** "Stock Selection Factor Series (58): Informed Trading and Lead-Buy/Lead-Sell".
+2.  **CMS China (2021).** "High-Frequency Tracking Series 2: Applications of High-Frequency Data Factors".
+3.  **GF Securities (2022).** "High-Frequency Data Factor Research Series 6: Factor Research under Information Asymmetry Theory".
+4.  **GF Securities (2022).** "High-Frequency Data Factor Research Series 7: Re-discussing Factor Research under Information Asymmetry Theory".
+5.  **Zheshang Securities (2026).** "Bond Market Special Research: Daily Chart Updates from a CTA Timing Long-Short Perspective".
