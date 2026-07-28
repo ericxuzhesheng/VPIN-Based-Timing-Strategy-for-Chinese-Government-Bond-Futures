@@ -66,6 +66,8 @@ COLUMN_ALIASES = {
 REQUIRED_COLUMNS = ["datetime", "open", "high", "low", "close", "volume"]
 OUTPUT_INTRADAY_COLUMNS = [
     "contract",
+    "source_contract",
+    "roll_flag",
     "datetime",
     "open",
     "high",
@@ -174,6 +176,10 @@ def standardize_columns(raw_df: pd.DataFrame) -> pd.DataFrame:
 
     if "open_interest" not in df.columns:
         df["open_interest"] = np.nan
+    if "source_contract" not in df.columns:
+        df["source_contract"] = "UNKNOWN"
+    if "roll_flag" not in df.columns:
+        df["roll_flag"] = False
 
     df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
     if df["datetime"].isna().all():
@@ -186,8 +192,19 @@ def standardize_columns(raw_df: pd.DataFrame) -> pd.DataFrame:
             errors="coerce",
         )
 
+    selected_columns = [
+        "datetime",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "open_interest",
+        "source_contract",
+        "roll_flag",
+    ]
     df = (
-        df[["datetime", "open", "high", "low", "close", "volume", "open_interest"]]
+        df[selected_columns]
         .dropna(subset=REQUIRED_COLUMNS)
         .drop_duplicates(subset="datetime", keep="last")
         .sort_values("datetime")
@@ -221,6 +238,43 @@ def calculate_vpin(
     if vpin_window < 2:
         raise ValueError("vpin_window must be at least 2.")
 
+    if "source_contract" in intraday_df.columns:
+        groups = [
+            _calculate_vpin_single_contract(
+                group.copy(),
+                classification_method=classification_method,
+                classification_window=classification_window,
+                vpin_window=vpin_window,
+                slope_window=slope_window,
+                zscore_window=zscore_window,
+                percentile_window=percentile_window,
+            )
+            for _, group in intraday_df.groupby("source_contract", sort=False)
+        ]
+        return pd.concat(groups).sort_index()
+
+    return _calculate_vpin_single_contract(
+        intraday_df.copy(),
+        classification_method=classification_method,
+        classification_window=classification_window,
+        vpin_window=vpin_window,
+        slope_window=slope_window,
+        zscore_window=zscore_window,
+        percentile_window=percentile_window,
+    )
+
+
+def _calculate_vpin_single_contract(
+    intraday_df: pd.DataFrame,
+    *,
+    classification_method: str,
+    classification_window: int,
+    vpin_window: int,
+    slope_window: int,
+    zscore_window: int,
+    percentile_window: int,
+) -> pd.DataFrame:
+    """Calculate VPIN for one concrete contract without crossing a roll."""
     df = intraday_df.copy()
     price_change = df["close"].diff()
     price_change.iloc[0] = df["close"].iloc[0] - df["open"].iloc[0]
