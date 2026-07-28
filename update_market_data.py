@@ -188,6 +188,61 @@ def _fetch_akshare_contract(
     )
 
 
+def cached_tushare_contract(
+    *,
+    pro: Any,
+    product: str,
+    ts_code: str,
+    start_date: str,
+    end_date: str,
+    cache_path: Path,
+) -> pd.DataFrame:
+    """Load one normalized contract cache or fetch and atomically create it."""
+    if cache_path.exists():
+        return pd.read_parquet(cache_path)
+    raw = _fetch_tushare_contract(
+        pro,
+        ts_code=ts_code,
+        start_date=start_date,
+        end_date=end_date,
+    )
+    normalized = normalize_tushare_minutes(raw, product=product)
+    _atomic_parquet(normalized, cache_path)
+    return normalized
+
+
+def cached_akshare_contract(
+    *,
+    akshare_module: Any,
+    product: str,
+    ts_code: str,
+    start_date: str,
+    end_date: str,
+    cache_path: Path,
+) -> pd.DataFrame:
+    """Load one normalized AKShare cache or fetch the available active overlap."""
+    if cache_path.exists():
+        return pd.read_parquet(cache_path)
+    raw = _fetch_akshare_contract(
+        akshare_module,
+        ts_code=ts_code,
+    )
+    normalized = normalize_akshare_minutes(
+        raw,
+        product=product,
+        source_contract=ts_code,
+    )
+    if not normalized.empty:
+        active = normalized["datetime"].between(
+            pd.Timestamp(start_date),
+            pd.Timestamp(end_date) + pd.Timedelta(days=1),
+            inclusive="left",
+        )
+        normalized = normalized.loc[active].reset_index(drop=True)
+    _atomic_parquet(normalized, cache_path)
+    return normalized
+
+
 def _atomic_parquet(frame: pd.DataFrame, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(f".{path.name}.tmp")
@@ -249,32 +304,43 @@ def update_product(
             f"[{product}] contract {index}/{len(ranges)} {ts_code} "
             f"{contract_start}..{contract_end}"
         )
-        raw_tushare = _fetch_tushare_contract(
-            pro,
+        tushare_cache = (
+            data_dir
+            / "raw"
+            / "tushare"
+            / "contracts"
+            / product
+            / f"{ts_code}.parquet"
+        )
+        normalized_tushare = cached_tushare_contract(
+            pro=pro,
+            product=product,
             ts_code=ts_code,
             start_date=contract_start,
             end_date=contract_end,
+            cache_path=tushare_cache,
         )
-        if not raw_tushare.empty:
-            tushare_frames.append(normalize_tushare_minutes(raw_tushare, product=product))
+        if not normalized_tushare.empty:
+            tushare_frames.append(normalized_tushare)
         try:
-            raw_akshare = _fetch_akshare_contract(
-                akshare_module,
-                ts_code=ts_code,
+            akshare_cache = (
+                data_dir
+                / "raw"
+                / "akshare"
+                / "contracts"
+                / product
+                / f"{ts_code}.parquet"
             )
-            if not raw_akshare.empty:
-                normalized = normalize_akshare_minutes(
-                    raw_akshare,
-                    product=product,
-                    source_contract=ts_code,
-                )
-                active = normalized["datetime"].between(
-                    pd.Timestamp(contract_start),
-                    pd.Timestamp(contract_end) + pd.Timedelta(days=1),
-                    inclusive="left",
-                )
-                if active.any():
-                    akshare_frames.append(normalized.loc[active].copy())
+            normalized_akshare = cached_akshare_contract(
+                akshare_module=akshare_module,
+                product=product,
+                ts_code=ts_code,
+                start_date=contract_start,
+                end_date=contract_end,
+                cache_path=akshare_cache,
+            )
+            if not normalized_akshare.empty:
+                akshare_frames.append(normalized_akshare)
         except Exception as exc:  # noqa: BLE001
             akshare_errors[ts_code] = str(exc)
 
