@@ -186,3 +186,27 @@ def test_validate_canonical_bars_returns_bounded_quality_summary() -> None:
     assert summary["first_datetime"] == "2026-07-27T09:35:00"
     assert summary["last_datetime"] == "2026-07-27T09:40:00"
     assert summary["source_rows"] == {"akshare": 1, "tushare": 1}
+
+
+def test_validate_canonical_bars_rejects_missing_mapped_trade_date() -> None:
+    valid = pd.DataFrame(
+        {
+            "product": ["T"],
+            "source_contract": ["T2609.CFX"],
+            "datetime": [pd.Timestamp("2026-07-27 09:35:00")],
+            "open": [108.1],
+            "high": [108.2],
+            "low": [108.0],
+            "close": [108.15],
+            "volume": [123],
+            "open_interest": [456],
+            "source": ["tushare"],
+            "roll_flag": [False],
+        }
+    )
+
+    with pytest.raises(DataQualityError, match="missing trade dates"):
+        validate_canonical_bars(
+            valid,
+            open_trade_dates={"2026-07-24", "2026-07-27"},
+        )
