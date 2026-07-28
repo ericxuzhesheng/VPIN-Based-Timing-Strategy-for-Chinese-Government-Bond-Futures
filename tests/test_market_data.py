@@ -136,6 +136,38 @@ def test_build_continuous_series_uses_daily_mapping_and_marks_roll() -> None:
     assert actual["roll_flag"].tolist() == [False, True]
 
 
+def test_build_continuous_series_marks_only_first_bar_of_roll_day() -> None:
+    bars = normalize_tushare_minutes(
+        pd.DataFrame(
+            {
+                "ts_code": ["T2606.CFX", "T2609.CFX", "T2609.CFX"],
+                "trade_time": [
+                    "2026-06-11 15:15:00",
+                    "2026-06-12 09:35:00",
+                    "2026-06-12 09:40:00",
+                ],
+                "open": [103.0, 104.0, 104.1],
+                "high": [103.1, 104.1, 104.2],
+                "low": [102.9, 103.9, 104.0],
+                "close": [103.0, 104.0, 104.1],
+                "vol": [100, 110, 120],
+                "oi": [1000, 1100, 1101],
+            }
+        ),
+        product="T",
+    )
+    mapping = pd.DataFrame(
+        {
+            "trade_date": ["20260611", "20260612"],
+            "mapping_ts_code": ["T2606.CFX", "T2609.CFX"],
+        }
+    )
+
+    actual = build_continuous_series(bars, mapping, product="T")
+
+    assert actual["roll_flag"].tolist() == [False, True, False]
+
+
 def test_validate_canonical_bars_rejects_weekend_and_duplicate_timestamp() -> None:
     invalid = pd.DataFrame(
         {

@@ -4,6 +4,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import pandas as pd
+import pytest
 
 from update_market_data import (
     cached_akshare_contract,
@@ -11,6 +12,7 @@ from update_market_data import (
     closed_trade_dates,
     compare_source_overlap,
     contract_date_ranges,
+    validate_mapping_product,
 )
 
 
@@ -141,3 +143,15 @@ def test_cached_akshare_contract_saves_fetch_result(tmp_path) -> None:
     assert cache_path.exists()
     assert len(actual) == 1
     assert actual.loc[0, "source"] == "akshare"
+
+
+def test_validate_mapping_product_rejects_t_contracts_for_tl() -> None:
+    wrong = pd.DataFrame(
+        {
+            "trade_date": ["20260727"],
+            "mapping_ts_code": ["T2609.CFX"],
+        }
+    )
+
+    with pytest.raises(ValueError, match="expected TL"):
+        validate_mapping_product(wrong, product="TL")

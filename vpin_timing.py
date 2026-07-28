@@ -86,6 +86,7 @@ OUTPUT_INTRADAY_COLUMNS = [
 OUTPUT_DAILY_COLUMNS = [
     "contract",
     "date",
+    "roll_flag",
     "daily_close",
     "daily_return",
     "daily_mean_vpin",
@@ -114,7 +115,7 @@ OUTPUT_NAV_COLUMNS = [
 
 
 def load_intraday_data(input_path: Path, start_date: str | None = None) -> pd.DataFrame:
-    """Load minute data from csv or Excel and return a standardized DataFrame."""
+    """Load minute data from Parquet or csv and return a standardized DataFrame."""
     if not input_path.exists():
         raise FileNotFoundError(f"Input file does not exist: {input_path}")
 
@@ -373,6 +374,8 @@ def aggregate_vpin_to_daily(
     """Aggregate minute-level VPIN features into a daily research table."""
     df = intraday_vpin.copy()
     df["date"] = df["datetime"].dt.normalize()
+    if "roll_flag" not in df.columns:
+        df["roll_flag"] = False
 
     daily = (
         df.groupby("date", as_index=False)
@@ -380,6 +383,7 @@ def aggregate_vpin_to_daily(
             daily_close=("close", "last"),
             daily_mean_vpin=("rolling_vpin", "mean"),
             daily_max_vpin=("rolling_vpin", "max"),
+            roll_flag=("roll_flag", "max"),
         )
         .sort_values("date")
         .reset_index(drop=True)
@@ -389,6 +393,7 @@ def aggregate_vpin_to_daily(
         raise ValueError("Daily aggregation produced no rows.")
 
     daily["daily_return"] = daily["daily_close"].pct_change()
+    daily.loc[daily["roll_flag"], "daily_return"] = np.nan
     daily["daily_vpin_slope"] = rolling_linear_slope(daily["daily_mean_vpin"], daily_slope_window)
     daily["daily_vpin_zscore"] = rolling_zscore(daily["daily_mean_vpin"], daily_stats_window)
     daily["daily_vpin_percentile"] = rolling_percentile_rank(

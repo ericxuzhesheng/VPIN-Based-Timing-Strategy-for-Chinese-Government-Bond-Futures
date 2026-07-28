@@ -25,13 +25,7 @@ from market_data import (
 
 SHANGHAI = ZoneInfo("Asia/Shanghai")
 PRODUCT_START_DATES = {"T": "20150320", "TL": "20230421"}
-CONTINUOUS_CODES = {"T": "T.CFX", "TL": "TL.CFX"}
-LEGACY_EXCEL_FILES = [
-    Path("10年国债期货_5min_3年.xlsx"),
-    Path("30年国债期货_5min_2年.xlsx"),
-]
-
-
+CONTINUOUS_CODES = {"T": "T.CFX", "TL": "TL0.CFX"}
 def closed_trade_dates(
     calendar: pd.DataFrame,
     *,
@@ -79,6 +73,23 @@ def contract_date_ranges(mapping: pd.DataFrame) -> list[tuple[str, str, str]]:
         )
         for row in ranges.itertuples(index=False)
     ]
+
+
+def validate_mapping_product(mapping: pd.DataFrame, *, product: str) -> None:
+    """Reject Tushare continuous-code aliases that map to another product."""
+    if "mapping_ts_code" not in mapping.columns:
+        raise ValueError("mapping is missing mapping_ts_code")
+    prefixes = (
+        mapping["mapping_ts_code"]
+        .astype(str)
+        .str.extract(r"^([A-Za-z]+)", expand=False)
+        .str.upper()
+    )
+    unexpected = sorted(prefixes.dropna().loc[prefixes.ne(product)].unique())
+    if unexpected:
+        raise ValueError(
+            f"Contract mapping for {product} has prefixes {unexpected}; expected {product}"
+        )
 
 
 def compare_source_overlap(
@@ -260,7 +271,14 @@ def _atomic_json(payload: Any, path: Path) -> None:
     os.replace(temporary, path)
 
 
-def _load_token(token_file: Path) -> str:
+def _load_token(token_file: Path | None) -> str:
+    environment_token = os.environ.get("TUSHARE_TOKEN", "").strip()
+    if environment_token:
+        return environment_token
+    if token_file is None:
+        raise ValueError(
+            "Set TUSHARE_TOKEN or pass --token-file with a local token file"
+        )
     if not token_file.exists():
         raise FileNotFoundError(f"Tushare token file does not exist: {token_file}")
     token = token_file.read_text(encoding="utf-8-sig").strip()
@@ -294,6 +312,7 @@ def update_product(
     mapping = mapping.drop_duplicates(
         subset=["trade_date"], keep="last"
     ).sort_values("trade_date")
+    validate_mapping_product(mapping, product=product)
 
     tushare_frames: list[pd.DataFrame] = []
     akshare_frames: list[pd.DataFrame] = []
@@ -362,6 +381,7 @@ def update_product(
     quality = validate_canonical_bars(
         canonical,
         open_trade_dates=mapping_dates,
+        allow_missing_trade_dates=True,
     )
     overlap = compare_source_overlap(tushare_bars, akshare_bars)
 
@@ -396,8 +416,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--token-file",
         type=Path,
-        default=Path(r"D:\Python\tushare token.txt"),
-        help="Local Tushare token file. Its contents are never printed.",
+        default=None,
+        help="Optional local Tushare token file; TUSHARE_TOKEN takes precedence.",
     )
     parser.add_argument("--data-dir", type=Path, default=Path("data"))
     parser.add_argument(

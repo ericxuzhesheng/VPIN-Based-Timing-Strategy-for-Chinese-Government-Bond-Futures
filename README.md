@@ -86,10 +86,20 @@ position = signal_raw.shift(1)
 .
 ├── LICENSE
 ├── README.md
+├── requirements.txt
+├── market_data.py
+├── update_market_data.py
 ├── vpin_timing.py
-├── 10年国债期货_5min_3年.xlsx
-├── 30年国债期货_5min_2年.xlsx
 ├── data/
+│   ├── raw/
+│   │   ├── tushare/
+│   │   └── akshare/
+│   ├── canonical/
+│   │   ├── T_5min.parquet
+│   │   └── TL_5min.parquet
+│   ├── metadata/
+│   │   ├── contract_mapping.parquet
+│   │   └── latest_update.json
 │   └── processed/
 │       ├── vpin_intraday.csv
 │       └── vpin_daily.csv
@@ -113,16 +123,16 @@ position = signal_raw.shift(1)
 
 说明：
 
-- 当前仓库未发现 `src/` 目录；
-- 当前仓库未发现 `scripts/` 目录；
-- 当前仓库未发现 `requirements.txt`；
+- `update_market_data.py` 使用 Tushare 和 AKShare 重建可审计的主力连续5分钟数据；
+- Tushare是规范主数据，AKShare用于同一真实合约的交叉核验和精确缺口补充；
+- 原始数据、主力映射和规范研究输入均不使用 Excel；
 - `data/processed/`、`results/tables/` 和 `results/figures/` 中的文件为当前已有 pipeline 输出；
 - `results/report.md` 是正式双语研究报告；
 - `LICENSE` 声明本项目采用 MIT 协议。
 
 ### 输入数据格式
 
-输入文件支持 `csv`、`xls`、`xlsx`，标准字段为：
+输入文件支持 `parquet`、`csv`，标准字段为：
 
 - `datetime`
 - `open`
@@ -140,8 +150,10 @@ position = signal_raw.shift(1)
 
 仓库默认输入文件：
 
-- `10年国债期货_5min_3年.xlsx`
-- `30年国债期货_5min_2年.xlsx`
+- `data/canonical/T_5min.parquet`
+- `data/canonical/TL_5min.parquet`
+
+规范 Parquet 还保留 `source_contract`、`source` 和 `roll_flag`，用于审计真实月合约、数据来源与换月点。VPIN滚动状态在真实合约切换时重置，换月日的跨合约价差不计入日收益。
 
 ### 输出文件
 
@@ -165,14 +177,14 @@ position = signal_raw.shift(1)
 
 ### 已有回测结果
 
-以下结果来自当前仓库中的 `results/tables/backtest_summary.csv`，回测区间均从 **2024-01-01** 开始。
+以下结果来自当前仓库中的 `results/tables/backtest_summary.csv`。T覆盖 **2015-03-20 至 2026-07-27**，TL覆盖 **2023-04-21 至 2026-07-27**。
 
 | 合约 | 策略 | 累计收益 | 年化收益 | 年化波动率 | 夏普比率 | 最大回撤 | Calmar | 胜率 | 换手率 |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| T | vpin_strategy | 0.051687 | 0.023104 | 0.022652 | 1.019954 | 0.026380 | 0.875799 | 0.465827 | 0.273381 |
-| T | long_only_benchmark | 0.058360 | 0.026041 | 0.024506 | 1.062654 | 0.022459 | 1.159514 | 0.552158 | 0.000000 |
-| TL | vpin_strategy | 0.130385 | 0.056805 | 0.062415 | 0.910117 | 0.072508 | 0.783430 | 0.463327 | 0.250447 |
-| TL | long_only_benchmark | 0.121149 | 0.052903 | 0.071131 | 0.743747 | 0.095250 | 0.555418 | 0.556351 | 0.000000 |
+| T | vpin_strategy | 0.149933 | 0.012865 | 0.032221 | 0.399285 | 0.067382 | 0.190932 | 0.416848 | 0.287945 |
+| T | long_only_benchmark | 0.272923 | 0.022327 | 0.035258 | 0.633233 | 0.073460 | 0.303933 | 0.518155 | 0.000000 |
+| TL | vpin_strategy | 0.110943 | 0.034130 | 0.057921 | 0.589250 | 0.070108 | 0.486819 | 0.440506 | 0.289873 |
+| TL | long_only_benchmark | 0.211858 | 0.063213 | 0.063197 | 1.000250 | 0.091549 | 0.690474 | 0.558228 | 0.000000 |
 
 ### 结果图表
 
@@ -212,13 +224,17 @@ cd VPIN-Based-Timing-Strategy-for-Chinese-Government-Bond-Futures
 安装依赖：
 
 ```bash
-pip install pandas numpy matplotlib openpyxl scipy
+pip install -r requirements.txt
 ```
 
 准备数据：
 
-- 使用仓库默认 Excel 文件：`10年国债期货_5min_3年.xlsx` 和 `30年国债期货_5min_2年.xlsx`；或
-- 准备自定义分钟级数据文件，并确保包含可被标准化为 `datetime`、`open`、`high`、`low`、`close`、`volume` 的字段。
+- 在本机设置 `TUSHARE_TOKEN` 环境变量，或通过 `--token-file` 指定仅保存在本机的Token文件；
+- 运行 `python update_market_data.py`，同时抓取Tushare和AKShare并生成规范Parquet。
+
+```bash
+python update_market_data.py --token-file path/to/tushare_token.txt
+```
 
 运行完整 pipeline：
 
@@ -349,10 +365,20 @@ The repository structure below reflects the actual inspected files:
 .
 ├── LICENSE
 ├── README.md
+├── requirements.txt
+├── market_data.py
+├── update_market_data.py
 ├── vpin_timing.py
-├── 10年国债期货_5min_3年.xlsx
-├── 30年国债期货_5min_2年.xlsx
 ├── data/
+│   ├── raw/
+│   │   ├── tushare/
+│   │   └── akshare/
+│   ├── canonical/
+│   │   ├── T_5min.parquet
+│   │   └── TL_5min.parquet
+│   ├── metadata/
+│   │   ├── contract_mapping.parquet
+│   │   └── latest_update.json
 │   └── processed/
 │       ├── vpin_intraday.csv
 │       └── vpin_daily.csv
@@ -376,16 +402,16 @@ The repository structure below reflects the actual inspected files:
 
 Notes:
 
-- No `src/` directory was found in the current repository;
-- No `scripts/` directory was found in the current repository;
-- No `requirements.txt` file was found in the current repository;
+- `update_market_data.py` rebuilds auditable main-contract 5-minute data with Tushare and AKShare;
+- Tushare is the canonical source, while AKShare cross-checks identical concrete contracts and fills exact missing bars;
+- Raw data, mappings, and canonical research inputs do not use Excel;
 - Files under `data/processed/`, `results/tables/`, and `results/figures/` are existing pipeline outputs;
 - `results/report.md` is the formal bilingual research report;
 - `LICENSE` declares that this project is released under the MIT License.
 
 ### Input Data Schema
 
-Supported input formats are `csv`, `xls`, and `xlsx`. The standardized columns are:
+Supported input formats are `parquet` and `csv`. The standardized columns are:
 
 - `datetime`
 - `open`
@@ -403,8 +429,10 @@ Common aliases are supported automatically:
 
 Default local input files:
 
-- `10年国债期货_5min_3年.xlsx`
-- `30年国债期货_5min_2年.xlsx`
+- `data/canonical/T_5min.parquet`
+- `data/canonical/TL_5min.parquet`
+
+Canonical Parquet also retains `source_contract`, `source`, and `roll_flag` for concrete-contract, source, and rollover auditing. VPIN state resets at each concrete-contract change, and cross-contract rollover gaps are excluded from daily returns.
 
 ### Output Files
 
@@ -428,14 +456,14 @@ Figures:
 
 ### Existing Backtest Results
 
-The following results come from the existing `results/tables/backtest_summary.csv` file, with the backtest period starting from **2024-01-01**.
+The following results come from `results/tables/backtest_summary.csv`. T covers **2015-03-20 through 2026-07-27**, while TL covers **2023-04-21 through 2026-07-27**.
 
 | Contract | Strategy | Cumulative Return | Annualized Return | Annualized Volatility | Sharpe Ratio | Max Drawdown | Calmar | Win Rate | Turnover |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| T | vpin_strategy | 0.051687 | 0.023104 | 0.022652 | 1.019954 | 0.026380 | 0.875799 | 0.465827 | 0.273381 |
-| T | long_only_benchmark | 0.058360 | 0.026041 | 0.024506 | 1.062654 | 0.022459 | 1.159514 | 0.552158 | 0.000000 |
-| TL | vpin_strategy | 0.130385 | 0.056805 | 0.062415 | 0.910117 | 0.072508 | 0.783430 | 0.463327 | 0.250447 |
-| TL | long_only_benchmark | 0.121149 | 0.052903 | 0.071131 | 0.743747 | 0.095250 | 0.555418 | 0.556351 | 0.000000 |
+| T | vpin_strategy | 0.149933 | 0.012865 | 0.032221 | 0.399285 | 0.067382 | 0.190932 | 0.416848 | 0.287945 |
+| T | long_only_benchmark | 0.272923 | 0.022327 | 0.035258 | 0.633233 | 0.073460 | 0.303933 | 0.518155 | 0.000000 |
+| TL | vpin_strategy | 0.110943 | 0.034130 | 0.057921 | 0.589250 | 0.070108 | 0.486819 | 0.440506 | 0.289873 |
+| TL | long_only_benchmark | 0.211858 | 0.063213 | 0.063197 | 1.000250 | 0.091549 | 0.690474 | 0.558228 | 0.000000 |
 
 ### Result Figures
 
@@ -475,13 +503,17 @@ cd VPIN-Based-Timing-Strategy-for-Chinese-Government-Bond-Futures
 Install dependencies:
 
 ```bash
-pip install pandas numpy matplotlib openpyxl scipy
+pip install -r requirements.txt
 ```
 
 Prepare data:
 
-- Use the default Excel files: `10年国债期货_5min_3年.xlsx` and `30年国债期货_5min_2年.xlsx`; or
-- Prepare a custom minute-level data file with fields that can be standardized to `datetime`, `open`, `high`, `low`, `close`, and `volume`.
+- Set `TUSHARE_TOKEN` locally, or pass a local-only token file with `--token-file`;
+- Run `python update_market_data.py` to fetch both Tushare and AKShare and build canonical Parquet files.
+
+```bash
+python update_market_data.py --token-file path/to/tushare_token.txt
+```
 
 Run the full pipeline:
 

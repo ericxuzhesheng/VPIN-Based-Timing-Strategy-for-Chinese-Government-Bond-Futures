@@ -1,0 +1,96 @@
+{
+  "generated_at": "2026-07-28T10:19:04.803403+08:00",
+  "latest_completed_trade_date": "20260727",
+  "frequency": "5min",
+  "canonical_source_policy": "tushare_primary_akshare_exact_gap_fill",
+  "products": [
+    {
+      "product": "T",
+      "start_date": "20150320",
+      "end_date": "20260727",
+      "mapping_rows": 2760,
+      "quality": {
+        "rows": 147112,
+        "first_datetime": "2015-03-20T09:15:00",
+        "last_datetime": "2026-07-27T15:15:00",
+        "trade_dates": 2754,
+        "contracts": 45,
+        "rolls": 44,
+        "source_rows": {
+          "akshare": 13,
+          "tushare": 147099
+        },
+        "missing_trade_dates": [
+          "2015-05-04",
+          "2015-12-04",
+          "2017-08-02",
+          "2018-04-25",
+          "2020-08-20",
+          "2020-08-26"
+        ]
+      },
+      "source_overlap": {
+        "overlap_rows": 17391,
+        "max_abs_open_diff": 0.1,
+        "open_equal_rate": 0.776264,
+        "max_abs_high_diff": 0.105,
+        "high_equal_rate": 0.946294,
+        "max_abs_low_diff": 0.085,
+        "low_equal_rate": 0.946122,
+        "max_abs_close_diff": 0.1,
+        "close_equal_rate": 0.85619,
+        "volume_equal_rate": 0.406877,
+        "open_interest_equal_rate": 0.699615
+      },
+      "akshare_errors": {
+        "T1509.CFX": "AKShare futures_zh_minute_sina T1509 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1512.CFX": "AKShare futures_zh_minute_sina T1512 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1603.CFX": "AKShare futures_zh_minute_sina T1603 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1606.CFX": "AKShare futures_zh_minute_sina T1606 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1609.CFX": "AKShare futures_zh_minute_sina T1609 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1612.CFX": "AKShare futures_zh_minute_sina T1612 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1703.CFX": "AKShare futures_zh_minute_sina T1703 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1706.CFX": "AKShare futures_zh_minute_sina T1706 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1709.CFX": "AKShare futures_zh_minute_sina T1709 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1712.CFX": "AKShare futures_zh_minute_sina T1712 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1803.CFX": "AKShare futures_zh_minute_sina T1803 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1806.CFX": "AKShare futures_zh_minute_sina T1806 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1809.CFX": "AKShare futures_zh_minute_sina T1809 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1812.CFX": "AKShare futures_zh_minute_sina T1812 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1903.CFX": "AKShare futures_zh_minute_sina T1903 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements"
+      }
+    },
+    {
+      "product": "TL",
+      "start_date": "20230421",
+      "end_date": "20260727",
+      "mapping_rows": 790,
+      "quality": {
+        "rows": 41080,
+        "first_datetime": "2023-04-21T09:30:00",
+        "last_datetime": "2026-07-27T15:15:00",
+        "trade_dates": 790,
+        "contracts": 14,
+        "rolls": 13,
+        "source_rows": {
+          "tushare": 41080
+        },
+        "missing_trade_dates": []
+      },
+      "source_overlap": {
+        "overlap_rows": 8103,
+        "max_abs_open_diff": 0.16,
+        "open_equal_rate": 0.82488,
+        "max_abs_high_diff": 0.09,
+        "high_equal_rate": 0.955449,
+        "max_abs_low_diff": 0.13,
+        "low_equal_rate": 0.950019,
+        "max_abs_close_diff": 0.03,
+        "close_equal_rate": 0.912502,
+        "volume_equal_rate": 0.417129,
+        "open_interest_equal_rate": 0.826237
+      },
+      "akshare_errors": {}
+    }
+  ]
+}

@@ -4,4 +4,5 @@ numpy==2.3.2
 pandas==2.3.3
 pyarrow==21.0.0
 pytest==8.4.2
+pytest-cov==6.2.1
 tushare==1.4.29

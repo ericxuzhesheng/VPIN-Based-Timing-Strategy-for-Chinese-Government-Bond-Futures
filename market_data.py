@@ -157,20 +157,19 @@ def build_continuous_series(
         .drop_duplicates(subset="trade_date", keep="last")
         .sort_values("trade_date")
     )
-    daily_mapping["roll_flag"] = daily_mapping["mapping_ts_code"].ne(
-        daily_mapping["mapping_ts_code"].shift()
-    )
-    if not daily_mapping.empty:
-        daily_mapping.iloc[0, daily_mapping.columns.get_loc("roll_flag")] = False
-
     candidates = bars.loc[bars["product"].eq(product)].copy()
     candidates["trade_date"] = candidates["datetime"].dt.normalize()
     selected = candidates.merge(daily_mapping, on="trade_date", how="inner")
     selected = selected.loc[
         selected["source_contract"].eq(selected["mapping_ts_code"])
     ].copy()
-    selected = selected.drop(columns=["trade_date", "mapping_ts_code"])
     selected = selected.sort_values("datetime").reset_index(drop=True)
+    selected["roll_flag"] = selected["source_contract"].ne(
+        selected["source_contract"].shift()
+    )
+    if not selected.empty:
+        selected.loc[0, "roll_flag"] = False
+    selected = selected.drop(columns=["trade_date", "mapping_ts_code"])
     if selected.empty:
         raise DataQualityError(f"No mapped bars remain for {product}")
     return selected
@@ -180,6 +179,7 @@ def validate_canonical_bars(
     bars: pd.DataFrame,
     *,
     open_trade_dates: Collection[str],
+    allow_missing_trade_dates: bool = False,
 ) -> dict[str, Any]:
     """Validate canonical bars and return a JSON-serializable summary."""
     required = set(CANONICAL_COLUMNS) | {"roll_flag"}
@@ -199,7 +199,7 @@ def validate_canonical_bars(
     if unexpected_dates:
         raise DataQualityError(f"non-trading dates detected: {unexpected_dates[:5]}")
     missing_dates = sorted(expected_dates.difference(observed_dates))
-    if missing_dates:
+    if missing_dates and not allow_missing_trade_dates:
         raise DataQualityError(f"missing trade dates detected: {missing_dates[:5]}")
 
     bad_ohlc = (
@@ -223,4 +223,5 @@ def validate_canonical_bars(
         "contracts": int(bars["source_contract"].nunique()),
         "rolls": int(bars["roll_flag"].sum()),
         "source_rows": source_rows,
+        "missing_trade_dates": missing_dates,
     }

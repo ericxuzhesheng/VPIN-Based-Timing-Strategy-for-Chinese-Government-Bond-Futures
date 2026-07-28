@@ -3,7 +3,12 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from vpin_timing import calculate_vpin, read_tabular_file, standardize_columns
+from vpin_timing import (
+    aggregate_vpin_to_daily,
+    calculate_vpin,
+    read_tabular_file,
+    standardize_columns,
+)
 
 
 def test_read_tabular_file_supports_parquet(tmp_path) -> None:
@@ -81,3 +86,24 @@ def test_calculate_vpin_resets_rolling_state_at_contract_roll() -> None:
 
     assert pd.isna(actual.loc[10, "rolling_vpin"])
     assert pd.notna(actual.loc[14, "rolling_vpin"])
+
+
+def test_daily_return_excludes_cross_contract_roll_jump() -> None:
+    intraday = pd.DataFrame(
+        {
+            "datetime": pd.to_datetime(
+                ["2026-06-11 15:15:00", "2026-06-12 15:15:00"]
+            ),
+            "close": [103.0, 104.0],
+            "rolling_vpin": [0.4, 0.5],
+            "roll_flag": [False, True],
+        }
+    )
+
+    actual = aggregate_vpin_to_daily(
+        intraday,
+        daily_slope_window=2,
+        daily_stats_window=10,
+    )
+
+    assert pd.isna(actual.loc[1, "daily_return"])

@@ -67,12 +67,12 @@ $$
 
 ### 数据与输入
 
-当前仓库默认使用以下本地分钟级数据文件：
+当前仓库默认使用由 Tushare 与 AKShare 重建的规范5分钟 Parquet：
 
-- `10年国债期货_5min_3年.xlsx`
-- `30年国债期货_5min_2年.xlsx`
+- `data/canonical/T_5min.parquet`
+- `data/canonical/TL_5min.parquet`
 
-脚本支持 `csv`、`xls`、`xlsx`，并将输入字段标准化为：
+Tushare提供真实月合约主力映射和规范主数据，AKShare用于同合约同时间的交叉核验与精确缺口补充。脚本支持 `parquet`、`csv`，并将输入字段标准化为：
 
 - `datetime`
 - `open`
@@ -81,6 +81,8 @@ $$
 - `close`
 - `volume`
 - `open_interest`
+
+规范数据同时保留 `source_contract`、`source` 和 `roll_flag`。VPIN状态在真实合约切换时重置，跨合约换月价差不计入日收益。
 
 当前已有处理后数据：
 
@@ -158,22 +160,22 @@ position = signal_raw.shift(1)
 
 ### 真实回测结果
 
-以下结果来自当前仓库中的 `results/tables/backtest_summary.csv`，回测区间均从 **2024-01-01** 开始。
+以下结果来自当前仓库中的 `results/tables/backtest_summary.csv`。T覆盖 **2015-03-20 至 2026-07-27**，TL覆盖 **2023-04-21 至 2026-07-27**。
 
 | 合约 | 策略 | 累计收益 | 年化收益 | 年化波动率 | 夏普比率 | 最大回撤 | Calmar | 胜率 | 换手率 |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| T | vpin_strategy | 0.051687 | 0.023104 | 0.022652 | 1.019954 | 0.026380 | 0.875799 | 0.465827 | 0.273381 |
-| T | long_only_benchmark | 0.058360 | 0.026041 | 0.024506 | 1.062654 | 0.022459 | 1.159514 | 0.552158 | 0.000000 |
-| TL | vpin_strategy | 0.130385 | 0.056805 | 0.062415 | 0.910117 | 0.072508 | 0.783430 | 0.463327 | 0.250447 |
-| TL | long_only_benchmark | 0.121149 | 0.052903 | 0.071131 | 0.743747 | 0.095250 | 0.555418 | 0.556351 | 0.000000 |
+| T | vpin_strategy | 0.149933 | 0.012865 | 0.032221 | 0.399285 | 0.067382 | 0.190932 | 0.416848 | 0.287945 |
+| T | long_only_benchmark | 0.272923 | 0.022327 | 0.035258 | 0.633233 | 0.073460 | 0.303933 | 0.518155 | 0.000000 |
+| TL | vpin_strategy | 0.110943 | 0.034130 | 0.057921 | 0.589250 | 0.070108 | 0.486819 | 0.440506 | 0.289873 |
+| TL | long_only_benchmark | 0.211858 | 0.063213 | 0.063197 | 1.000250 | 0.091549 | 0.690474 | 0.558228 | 0.000000 |
 
 ### 结果解读
 
-在当前已有结果（2024年至今）中：
+在当前全历史结果中：
 
-- 对 `T` 合约，`vpin_strategy` 的累计收益和夏普比率略低于 `long_only_benchmark`，但通过规避高毒性时段，成功将最大回撤限制在较低水平；
-- 对 `TL` 合约，`vpin_strategy` 表现出色，累计收益、年化收益和夏普比率均显著高于 `long_only_benchmark`，且最大回撤由 9.5% 优化至 7.2%；
-- 两个合约的 VPIN 策略均产生了明显换手，说明该信号确实有效触发了多头 / 防御切换，尤其是在 30 年债（TL）这种波动较大的品种中展现了较强的避险价值。
+- 对 `T` 合约，`vpin_strategy` 的累计收益和夏普比率低于 `long_only_benchmark`，最大回撤由 7.35% 降至 6.74%；
+- 对 `TL` 合约，策略同样牺牲了部分收益与夏普比率，但最大回撤由 9.15% 降至 7.01%；
+- 因而当前VPIN规则体现的是有限的回撤缓释，而不是相对长期持有的收益增强；结论应结合样本外验证和交易成本继续检验。
 
 ### 图表索引
 
@@ -301,12 +303,12 @@ This project aggregates VPIN to daily frequency and monitors both `daily_vpin_pe
 
 ### Data and Inputs
 
-The current repository uses the following default local minute-level files:
+The repository uses canonical 5-minute Parquet rebuilt from Tushare and AKShare:
 
-- `10年国债期货_5min_3年.xlsx`
-- `30年国债期货_5min_2年.xlsx`
+- `data/canonical/T_5min.parquet`
+- `data/canonical/TL_5min.parquet`
 
-The script supports `csv`, `xls`, and `xlsx` inputs and standardizes columns into:
+Tushare supplies concrete-contract mappings and canonical bars; AKShare cross-checks identical contract/timestamp observations and fills exact gaps. The script supports `parquet` and `csv` inputs and standardizes columns into:
 
 - `datetime`
 - `open`
@@ -315,6 +317,8 @@ The script supports `csv`, `xls`, and `xlsx` inputs and standardizes columns int
 - `close`
 - `volume`
 - `open_interest`
+
+Canonical data also retains `source_contract`, `source`, and `roll_flag`. VPIN state resets at concrete-contract changes, and cross-contract rollover gaps are excluded from daily returns.
 
 Existing processed data files:
 
@@ -392,22 +396,22 @@ Performance metrics include:
 
 ### Real Backtest Results
 
-The following results are from the existing `results/tables/backtest_summary.csv` file, with the backtest period starting from **2024-01-01**.
+The following results are from `results/tables/backtest_summary.csv`. T covers **2015-03-20 through 2026-07-27**, while TL covers **2023-04-21 through 2026-07-27**.
 
 | Contract | Strategy | Cumulative Return | Annualized Return | Annualized Volatility | Sharpe Ratio | Max Drawdown | Calmar | Win Rate | Turnover |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| T | vpin_strategy | 0.051687 | 0.023104 | 0.022652 | 1.019954 | 0.026380 | 0.875799 | 0.465827 | 0.273381 |
-| T | long_only_benchmark | 0.058360 | 0.026041 | 0.024506 | 1.062654 | 0.022459 | 1.159514 | 0.552158 | 0.000000 |
-| TL | vpin_strategy | 0.130385 | 0.056805 | 0.062415 | 0.910117 | 0.072508 | 0.783430 | 0.463327 | 0.250447 |
-| TL | long_only_benchmark | 0.121149 | 0.052903 | 0.071131 | 0.743747 | 0.095250 | 0.555418 | 0.556351 | 0.000000 |
+| T | vpin_strategy | 0.149933 | 0.012865 | 0.032221 | 0.399285 | 0.067382 | 0.190932 | 0.416848 | 0.287945 |
+| T | long_only_benchmark | 0.272923 | 0.022327 | 0.035258 | 0.633233 | 0.073460 | 0.303933 | 0.518155 | 0.000000 |
+| TL | vpin_strategy | 0.110943 | 0.034130 | 0.057921 | 0.589250 | 0.070108 | 0.486819 | 0.440506 | 0.289873 |
+| TL | long_only_benchmark | 0.211858 | 0.063213 | 0.063197 | 1.000250 | 0.091549 | 0.690474 | 0.558228 | 0.000000 |
 
 ### Interpretation
 
-Based on the existing outputs (from 2024 to present):
+Based on the full-history outputs:
 
-- For the `T` contract, `vpin_strategy` has slightly lower cumulative return and Sharpe ratio than `long_only_benchmark`, but effectively limits the maximum drawdown by avoiding high-toxicity periods;
-- For the `TL` contract, `vpin_strategy` outperforms significantly, with higher cumulative return, annualized return, and Sharpe ratio than `long_only_benchmark`, while reducing max drawdown from 9.5% to 7.2%;
-- The VPIN strategy generates non-zero turnover for both contracts, indicating that the signal actively identifies risk points and switches between long and defensive states, providing strong hedging value particularly in the more volatile 30-year bond futures (TL).
+- For `T`, the strategy trails the long-only benchmark in cumulative return and Sharpe ratio, while reducing maximum drawdown from 7.35% to 6.74%;
+- For `TL`, it also sacrifices return and Sharpe ratio, while reducing maximum drawdown from 9.15% to 7.01%;
+- The current VPIN rule therefore shows limited drawdown mitigation rather than return enhancement, and still requires out-of-sample and transaction-cost validation.
 
 ### Figure Index
 
