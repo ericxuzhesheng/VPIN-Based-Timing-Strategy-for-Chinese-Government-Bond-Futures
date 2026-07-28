@@ -28,8 +28,8 @@ import pandas as pd
 
 
 DEFAULT_INPUTS = {
-    "T": Path("10年国债期货_5min_3年.xlsx"),
-    "TL": Path("30年国债期货_5min_2年.xlsx"),
+    "T": Path("data/canonical/T_5min.parquet"),
+    "TL": Path("data/canonical/TL_5min.parquet"),
 }
 CONTRACT_CHOICES = ["T", "TL", "ALL"]
 
@@ -135,10 +135,10 @@ def load_intraday_data(input_path: Path, start_date: str | None = None) -> pd.Da
 
 
 def read_tabular_file(input_path: Path) -> pd.DataFrame:
-    """Read csv or Excel input into a raw DataFrame."""
+    """Read a Parquet or csv input into a raw DataFrame."""
     suffix = input_path.suffix.lower()
-    if suffix in {".xlsx", ".xls"}:
-        return pd.read_excel(input_path)
+    if suffix == ".parquet":
+        return pd.read_parquet(input_path)
 
     if suffix == ".csv":
         encodings = ["utf-8-sig", "utf-8", "gbk", "gb2312"]
@@ -150,7 +150,7 @@ def read_tabular_file(input_path: Path) -> pd.DataFrame:
                 last_error = exc
         raise ValueError(f"Failed to read csv file with supported encodings: {last_error}")
 
-    raise ValueError(f"Unsupported file type: {suffix}. Use csv, xls, or xlsx.")
+    raise ValueError(f"Unsupported file type: {suffix}. Use parquet or csv.")
 
 
 def standardize_columns(raw_df: pd.DataFrame) -> pd.DataFrame:
@@ -650,7 +650,7 @@ def parse_args() -> argparse.Namespace:
         default="ALL",
         help="Futures contract. Use ALL to run both T and TL together.",
     )
-    parser.add_argument("--start-date", default="2024-01-01", help="Optional inclusive start date, e.g. 2024-01-01.")
+    parser.add_argument("--start-date", default=None, help="Optional inclusive start date, e.g. 2024-01-01.")
     parser.add_argument("--output-dir", type=Path, default=Path("results"), help="Directory for figures and tables.")
     parser.add_argument(
         "--processed-dir",
