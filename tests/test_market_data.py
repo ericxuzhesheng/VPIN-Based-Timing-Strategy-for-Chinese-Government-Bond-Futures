@@ -210,3 +210,29 @@ def test_validate_canonical_bars_rejects_missing_mapped_trade_date() -> None:
             valid,
             open_trade_dates={"2026-07-24", "2026-07-27"},
         )
+
+
+def test_validate_canonical_bars_can_report_known_source_gaps() -> None:
+    bars = pd.DataFrame(
+        {
+            "product": ["T"],
+            "source_contract": ["T2609.CFX"],
+            "datetime": [pd.Timestamp("2026-07-27 09:35:00")],
+            "open": [108.1],
+            "high": [108.2],
+            "low": [108.0],
+            "close": [108.15],
+            "volume": [123],
+            "open_interest": [456],
+            "source": ["tushare"],
+            "roll_flag": [False],
+        }
+    )
+
+    summary = validate_canonical_bars(
+        bars,
+        open_trade_dates={"2026-07-24", "2026-07-27"},
+        allow_missing_trade_dates=True,
+    )
+
+    assert summary["missing_trade_dates"] == ["2026-07-24"]
