@@ -194,9 +194,13 @@ def validate_canonical_bars(
         raise DataQualityError("canonical timestamps are not increasing")
 
     observed_dates = set(bars["datetime"].dt.strftime("%Y-%m-%d"))
-    unexpected_dates = sorted(observed_dates.difference(set(open_trade_dates)))
+    expected_dates = set(open_trade_dates)
+    unexpected_dates = sorted(observed_dates.difference(expected_dates))
     if unexpected_dates:
         raise DataQualityError(f"non-trading dates detected: {unexpected_dates[:5]}")
+    missing_dates = sorted(expected_dates.difference(observed_dates))
+    if missing_dates:
+        raise DataQualityError(f"missing trade dates detected: {missing_dates[:5]}")
 
     bad_ohlc = (
         bars["high"].lt(bars[["open", "close", "low"]].max(axis=1))
