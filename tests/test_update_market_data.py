@@ -6,6 +6,8 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 
 from update_market_data import (
+    cached_akshare_contract,
+    cached_tushare_contract,
     closed_trade_dates,
     compare_source_overlap,
     contract_date_ranges,
@@ -76,3 +78,66 @@ def test_compare_source_overlap_reports_price_and_volume_differences() -> None:
     assert actual["overlap_rows"] == 1
     assert actual["max_abs_close_diff"] == 0.01
     assert actual["volume_equal_rate"] == 0.0
+
+
+def test_cached_tushare_contract_reuses_saved_normalized_bars(tmp_path) -> None:
+    cache_path = tmp_path / "T2609.CFX.parquet"
+    expected = pd.DataFrame(
+        {
+            "product": ["T"],
+            "source_contract": ["T2609.CFX"],
+            "datetime": [pd.Timestamp("2026-07-27 09:35:00")],
+            "open": [108.1],
+            "high": [108.2],
+            "low": [108.0],
+            "close": [108.15],
+            "volume": [123],
+            "open_interest": [456],
+            "source": ["tushare"],
+        }
+    )
+    expected.to_parquet(cache_path, index=False)
+
+    actual = cached_tushare_contract(
+        pro=object(),
+        product="T",
+        ts_code="T2609.CFX",
+        start_date="2026-06-12",
+        end_date="2026-07-27",
+        cache_path=cache_path,
+    )
+
+    pd.testing.assert_frame_equal(actual, expected)
+
+
+def test_cached_akshare_contract_saves_fetch_result(tmp_path) -> None:
+    class FakeAkshare:
+        @staticmethod
+        def futures_zh_minute_sina(*, symbol: str, period: str) -> pd.DataFrame:
+            assert symbol == "T2609"
+            assert period == "5"
+            return pd.DataFrame(
+                {
+                    "datetime": ["2026-07-27 09:35:00"],
+                    "open": [108.1],
+                    "high": [108.2],
+                    "low": [108.0],
+                    "close": [108.15],
+                    "volume": [123],
+                    "hold": [456],
+                }
+            )
+
+    cache_path = tmp_path / "T2609.CFX.parquet"
+    actual = cached_akshare_contract(
+        akshare_module=FakeAkshare(),
+        product="T",
+        ts_code="T2609.CFX",
+        start_date="2026-06-12",
+        end_date="2026-07-27",
+        cache_path=cache_path,
+    )
+
+    assert cache_path.exists()
+    assert len(actual) == 1
+    assert actual.loc[0, "source"] == "akshare"
