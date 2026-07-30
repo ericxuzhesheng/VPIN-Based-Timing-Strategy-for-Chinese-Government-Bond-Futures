@@ -160,14 +160,18 @@ position = signal_raw.shift(1)
 
 ### 真实回测结果
 
+<!-- AUTO-DATE-RANGE-ZH -->
 以下结果来自当前仓库中的 `results/tables/backtest_summary.csv`。T覆盖 **2015-03-20 至 2026-07-27**，TL覆盖 **2023-04-21 至 2026-07-27**。
+<!-- /AUTO-DATE-RANGE-ZH -->
 
+<!-- AUTO-TABLE-ZH -->
 | 合约 | 策略 | 累计收益 | 年化收益 | 年化波动率 | 夏普比率 | 最大回撤 | Calmar | 胜率 | 换手率 |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
 | T | vpin_strategy | 0.149933 | 0.012865 | 0.032221 | 0.399285 | 0.067382 | 0.190932 | 0.416848 | 0.287945 |
 | T | long_only_benchmark | 0.272923 | 0.022327 | 0.035258 | 0.633233 | 0.073460 | 0.303933 | 0.518155 | 0.000000 |
 | TL | vpin_strategy | 0.110943 | 0.034130 | 0.057921 | 0.589250 | 0.070108 | 0.486819 | 0.440506 | 0.289873 |
 | TL | long_only_benchmark | 0.211858 | 0.063213 | 0.063197 | 1.000250 | 0.091549 | 0.690474 | 0.558228 | 0.000000 |
+<!-- /AUTO-TABLE-ZH -->
 
 ### 结果解读
 
@@ -396,14 +400,18 @@ Performance metrics include:
 
 ### Real Backtest Results
 
+<!-- AUTO-DATE-RANGE-EN -->
 The following results are from `results/tables/backtest_summary.csv`. T covers **2015-03-20 through 2026-07-27**, while TL covers **2023-04-21 through 2026-07-27**.
+<!-- /AUTO-DATE-RANGE-EN -->
 
+<!-- AUTO-TABLE-EN -->
 | Contract | Strategy | Cumulative Return | Annualized Return | Annualized Volatility | Sharpe Ratio | Max Drawdown | Calmar | Win Rate | Turnover |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
 | T | vpin_strategy | 0.149933 | 0.012865 | 0.032221 | 0.399285 | 0.067382 | 0.190932 | 0.416848 | 0.287945 |
 | T | long_only_benchmark | 0.272923 | 0.022327 | 0.035258 | 0.633233 | 0.073460 | 0.303933 | 0.518155 | 0.000000 |
 | TL | vpin_strategy | 0.110943 | 0.034130 | 0.057921 | 0.589250 | 0.070108 | 0.486819 | 0.440506 | 0.289873 |
 | TL | long_only_benchmark | 0.211858 | 0.063213 | 0.063197 | 1.000250 | 0.091549 | 0.690474 | 0.558228 | 0.000000 |
+<!-- /AUTO-TABLE-EN -->
 
 ### Interpretation
 
@@ -470,9 +478,17 @@ python vpin_timing.py --contract T --input data/raw/T_5min.csv
 2. The current strategy is a simple long-versus-defensive model and has not yet been tested with parameter grid search, out-of-sample validation, or portfolio-level optimization;
 3. Exchange fees, slippage, and market impact are not separately modeled unless `--transaction-cost` is explicitly set when running the script;
 4. Future extensions can include rolling-window validation, parameter stability analysis, cross-instrument portfolios, and risk-budget constraints.
+### 参考文献
 
-### References
+**学术奠基：**
+1.  **Easley, D., López de Prado, M. M., & O'Hara, M. (2012).** "Flow Toxicity and Liquidity in a High-Frequency World." *The Review of Financial Studies*, 25(5), 1457-1493. (对应仓库 `report/Flow Toxicity and Liquidity in a High-Frequency World.pdf`)
+2.  **Easley, D., López de Prado, M. M., & O'Hara, M. (2012).** "The Volume Clock: Insights into the High-Frequency Paradigm." *The Journal of Portfolio Management*, 39(1), 19-29. (对应仓库 `report/The Volume Clock Insights into the High-Frequency Paradigm.pdf`)
 
-1.  **Easley, D., López de Prado, M. M., & O'Hara, M. (2012).** "Flow Toxicity and Liquidity in a High-Frequency World." *The Review of Financial Studies*, 25(5), 1457-1493. (See `report/Flow Toxicity and Liquidity in a High-Frequency World.pdf`)
-2.  **Easley, D., López de Prado, M. M., & O'Hara, M. (2012).** "The Volume Clock: Insights into the High-Frequency Paradigm." *The Journal of Portfolio Management*, 39(1), 19-29. (See `report/The Volume Clock Insights into the High-Frequency Paradigm.pdf`)
-budget constraints.
+**业界实践：**
+1.  **海通证券 (2020).** 《选股因子系列研究（五十八）：知情交易与主买主卖》. (对应仓库 `report/20200214-海通证券-选股因子系列研究（五十八）：知情交易与主买主卖.pdf`)
+2.  **招商证券 (2021).** 《“高频寻踪”系列之二：轻装上阵，高频数据因子的应用》. (对应仓库 `report/20210107-招商证券-“高频寻踪”系列之二：轻装上阵，高频数据因子的应用.pdf`)
+3.  **广发证券 (2022).** 《高频数据因子研究系列六：信息不对称理论下的因子研究》. (对应仓库 `report/20220221-广发证券-高频数据因子研究系列六：信息不对称理论下的因子研究.pdf`)
+4.  **广发证券 (2022).** 《高频数据因子研究系列七：再谈信息不对称理论下的因子研究》. (对应仓库 `report/20220330-广发证券-高频数据因子研究系列七：再谈信息不对称理论下的因子研究.pdf`)
+5.  **浙商证券 (2026).** 《债市专题研究：交易性择时多空视角下每日一图更新》. (对应仓库 `report/浙商证券_债市专题研究_交易性择时多空视角下每日一图更新_20260225.pdf`)
+
+---
