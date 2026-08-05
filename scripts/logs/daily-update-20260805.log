@@ -1,0 +1,224 @@
+
+============================================================
+  STEP 1/3: Refresh market data (Tushare + AKShare)
+  2026-08-05 19:18:12 CST
+============================================================
+Latest completed CFFEX trade date: 20260805
+[T] contract 1/45 T1509.CFX 2015-03-20..2015-08-12
+[T] contract 2/45 T1512.CFX 2015-08-13..2015-11-12
+[T] contract 3/45 T1603.CFX 2015-11-13..2016-02-03
+[T] contract 4/45 T1606.CFX 2016-02-04..2016-05-04
+[T] contract 5/45 T1609.CFX 2016-05-05..2016-08-08
+[T] contract 6/45 T1612.CFX 2016-08-09..2016-11-08
+[T] contract 7/45 T1703.CFX 2016-11-09..2017-01-17
+[T] contract 8/45 T1706.CFX 2017-01-18..2017-05-08
+[T] contract 9/45 T1709.CFX 2017-05-09..2017-08-07
+[T] contract 10/45 T1712.CFX 2017-08-08..2017-11-08
+[T] contract 11/45 T1803.CFX 2017-11-09..2018-02-06
+[T] contract 12/45 T1806.CFX 2018-02-07..2018-05-16
+[T] contract 13/45 T1809.CFX 2018-05-17..2018-08-13
+[T] contract 14/45 T1812.CFX 2018-08-14..2018-11-13
+[T] contract 15/45 T1903.CFX 2018-11-14..2019-02-19
+[T] contract 16/45 T1906.CFX 2019-02-20..2019-05-17
+[T] contract 17/45 T1909.CFX 2019-05-20..2019-08-13
+[T] contract 18/45 T1912.CFX 2019-08-14..2019-11-15
+[T] contract 19/45 T2003.CFX 2019-11-18..2020-02-14
+[T] contract 20/45 T2006.CFX 2020-02-17..2020-05-14
+[T] contract 21/45 T2009.CFX 2020-05-15..2020-08-19
+[T] contract 22/45 T2012.CFX 2020-08-20..2020-11-19
+[T] contract 23/45 T2103.CFX 2020-11-20..2021-02-18
+[T] contract 24/45 T2106.CFX 2021-02-19..2021-05-19
+[T] contract 25/45 T2109.CFX 2021-05-20..2021-08-18
+[T] contract 26/45 T2112.CFX 2021-08-19..2021-11-19
+[T] contract 27/45 T2203.CFX 2021-11-22..2022-02-16
+[T] contract 28/45 T2206.CFX 2022-02-17..2022-05-18
+[T] contract 29/45 T2209.CFX 2022-05-19..2022-08-18
+[T] contract 30/45 T2212.CFX 2022-08-19..2022-11-16
+[T] contract 31/45 T2303.CFX 2022-11-17..2023-02-20
+[T] contract 32/45 T2306.CFX 2023-02-21..2023-05-18
+[T] contract 33/45 T2309.CFX 2023-05-19..2023-08-21
+[T] contract 34/45 T2312.CFX 2023-08-22..2023-11-21
+[T] contract 35/45 T2403.CFX 2023-11-22..2024-02-20
+[T] contract 36/45 T2406.CFX 2024-02-21..2024-05-17
+[T] contract 37/45 T2409.CFX 2024-05-20..2024-08-19
+[T] contract 38/45 T2412.CFX 2024-08-20..2024-11-21
+[T] contract 39/45 T2503.CFX 2024-11-22..2025-02-19
+[T] contract 40/45 T2506.CFX 2025-02-20..2025-05-19
+[T] contract 41/45 T2509.CFX 2025-05-20..2025-08-21
+[T] contract 42/45 T2512.CFX 2025-08-22..2025-11-24
+[T] contract 43/45 T2603.CFX 2025-11-25..2026-02-24
+[T] contract 44/45 T2606.CFX 2026-02-25..2026-05-26
+[T] contract 45/45 T2609.CFX 2026-05-27..2026-08-05
+[TL] contract 1/14 TL2306.CFX 2023-04-21..2023-05-18
+[TL] contract 2/14 TL2309.CFX 2023-05-19..2023-08-18
+[TL] contract 3/14 TL2312.CFX 2023-08-21..2023-11-22
+[TL] contract 4/14 TL2403.CFX 2023-11-23..2024-02-19
+[TL] contract 5/14 TL2406.CFX 2024-02-20..2024-05-15
+[TL] contract 6/14 TL2409.CFX 2024-05-16..2024-08-15
+[TL] contract 7/14 TL2412.CFX 2024-08-16..2024-11-21
+[TL] contract 8/14 TL2503.CFX 2024-11-22..2025-02-18
+[TL] contract 9/14 TL2506.CFX 2025-02-19..2025-05-20
+[TL] contract 10/14 TL2509.CFX 2025-05-21..2025-08-20
+[TL] contract 11/14 TL2512.CFX 2025-08-21..2025-11-24
+[TL] contract 12/14 TL2603.CFX 2025-11-25..2026-02-24
+[TL] contract 13/14 TL2606.CFX 2026-02-25..2026-05-22
+[TL] contract 14/14 TL2609.CFX 2026-05-25..2026-08-05
+{
+  "generated_at": "2026-08-05T19:19:22.238991+08:00",
+  "latest_completed_trade_date": "20260805",
+  "frequency": "5min",
+  "canonical_source_policy": "tushare_primary_akshare_exact_gap_fill",
+  "products": [
+    {
+      "product": "T",
+      "start_date": "20150320",
+      "end_date": "20260805",
+      "mapping_rows": 2767,
+      "quality": {
+        "rows": 147112,
+        "first_datetime": "2015-03-20T09:15:00",
+        "last_datetime": "2026-07-27T15:15:00",
+        "trade_dates": 2754,
+        "contracts": 45,
+        "rolls": 44,
+        "source_rows": {
+          "akshare": 13,
+          "tushare": 147099
+        },
+        "missing_trade_dates": [
+          "2015-05-04",
+          "2015-12-04",
+          "2017-08-02",
+          "2018-04-25",
+          "2020-08-20",
+          "2020-08-26",
+          "2026-07-28",
+          "2026-07-29",
+          "2026-07-30",
+          "2026-07-31",
+          "2026-08-03",
+          "2026-08-04",
+          "2026-08-05"
+        ]
+      },
+      "source_overlap": {
+        "overlap_rows": 17391,
+        "max_abs_open_diff": 0.1,
+        "open_equal_rate": 0.776264,
+        "max_abs_high_diff": 0.105,
+        "high_equal_rate": 0.946294,
+        "max_abs_low_diff": 0.085,
+        "low_equal_rate": 0.946122,
+        "max_abs_close_diff": 0.1,
+        "close_equal_rate": 0.85619,
+        "volume_equal_rate": 0.406877,
+        "open_interest_equal_rate": 0.699615
+      },
+      "akshare_errors": {
+        "T1509.CFX": "AKShare futures_zh_minute_sina T1509 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1512.CFX": "AKShare futures_zh_minute_sina T1512 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1603.CFX": "AKShare futures_zh_minute_sina T1603 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1606.CFX": "AKShare futures_zh_minute_sina T1606 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1609.CFX": "AKShare futures_zh_minute_sina T1609 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1612.CFX": "AKShare futures_zh_minute_sina T1612 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1703.CFX": "AKShare futures_zh_minute_sina T1703 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1706.CFX": "AKShare futures_zh_minute_sina T1706 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1709.CFX": "AKShare futures_zh_minute_sina T1709 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1712.CFX": "AKShare futures_zh_minute_sina T1712 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1803.CFX": "AKShare futures_zh_minute_sina T1803 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1806.CFX": "AKShare futures_zh_minute_sina T1806 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1809.CFX": "AKShare futures_zh_minute_sina T1809 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1812.CFX": "AKShare futures_zh_minute_sina T1812 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
+        "T1903.CFX": "AKShare futures_zh_minute_sina T1903 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements"
+      }
+    },
+    {
+      "product": "TL",
+      "start_date": "20230421",
+      "end_date": "20260805",
+      "mapping_rows": 797,
+      "quality": {
+        "rows": 41080,
+        "first_datetime": "2023-04-21T09:30:00",
+        "last_datetime": "2026-07-27T15:15:00",
+        "trade_dates": 790,
+        "contracts": 14,
+        "rolls": 13,
+        "source_rows": {
+          "tushare": 41080
+        },
+        "missing_trade_dates": [
+          "2026-07-28",
+          "2026-07-29",
+          "2026-07-30",
+          "2026-07-31",
+          "2026-08-03",
+          "2026-08-04",
+          "2026-08-05"
+        ]
+      },
+      "source_overlap": {
+        "overlap_rows": 8103,
+        "max_abs_open_diff": 0.16,
+        "open_equal_rate": 0.82488,
+        "max_abs_high_diff": 0.09,
+        "high_equal_rate": 0.955449,
+        "max_abs_low_diff": 0.13,
+        "low_equal_rate": 0.950019,
+        "max_abs_close_diff": 0.03,
+        "close_equal_rate": 0.912502,
+        "volume_equal_rate": 0.417129,
+        "open_interest_equal_rate": 0.826237
+      },
+      "akshare_errors": {}
+    }
+  ]
+}
+✓ Market data refresh complete.
+
+============================================================
+  STEP 2/3: Run VPIN timing pipeline
+  2026-08-05 19:19:22 CST
+============================================================
+Running VPIN workflow for T with input: data/canonical/T_5min.parquet
+Detected median bar interval: 0 days 00:05:00
+Running VPIN workflow for TL with input: data/canonical/TL_5min.parquet
+Detected median bar interval: 0 days 00:05:00
+Contracts: T, TL
+Input file [T]: data/canonical/T_5min.parquet (updated 2026-08-05 11:19:21.416994333)
+Input file [TL]: data/canonical/TL_5min.parquet (updated 2026-08-05 11:19:22.232010126)
+Saved tables:
+  intraday: data/processed/vpin_intraday.csv
+  daily: data/processed/vpin_daily.csv
+  summary: results/tables/backtest_summary.csv
+  nav: results/tables/strategy_nav.csv
+Saved figures:
+  results/figures/t_price_vs_vpin.png
+  results/figures/t_vpin_slope_vs_return.png
+  results/figures/t_strategy_nav_vs_benchmark.png
+  results/figures/t_drawdown_comparison.png
+  results/figures/tl_price_vs_vpin.png
+  results/figures/tl_vpin_slope_vs_return.png
+  results/figures/tl_strategy_nav_vs_benchmark.png
+  results/figures/tl_drawdown_comparison.png
+Backtest summary:
+contract            strategy  cumulative_return  annualized_return  annualized_volatility  sharpe_ratio  max_drawdown  calmar_ratio  win_rate  turnover
+       T       vpin_strategy           0.149933           0.012865               0.032221      0.399285      0.067382      0.190932  0.416848  0.287945
+       T long_only_benchmark           0.272923           0.022327               0.035258      0.633233      0.073460      0.303933  0.518155  0.000000
+      TL       vpin_strategy           0.110943           0.034130               0.057921      0.589250      0.070108      0.486819  0.440506  0.289873
+      TL long_only_benchmark           0.211858           0.063213               0.063197      1.000250      0.091549      0.690474  0.558228  0.000000
+✓ VPIN pipeline complete.
+
+============================================================
+  STEP 3/3: Update research report
+  2026-08-05 19:19:33 CST
+============================================================
+Updated /home/runner/work/VPIN-Based-Timing-Strategy-for-Chinese-Government-Bond-Futures/VPIN-Based-Timing-Strategy-for-Chinese-Government-Bond-Futures/README.md
+Updated /home/runner/work/VPIN-Based-Timing-Strategy-for-Chinese-Government-Bond-Futures/VPIN-Based-Timing-Strategy-for-Chinese-Government-Bond-Futures/results/report.md
+✓ Report update complete.
+
+============================================================
+  DAILY UPDATE FINISHED
+  2026-08-05 19:19:33 CST
+============================================================
+Log saved to: scripts/logs/daily-update-20260805.log
