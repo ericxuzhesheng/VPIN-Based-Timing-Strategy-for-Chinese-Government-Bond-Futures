@@ -161,14 +161,14 @@ position = signal_raw.shift(1)
 ### 真实回测结果
 
 <!-- AUTO-DATE-RANGE-ZH -->
-以下结果来自当前仓库中的 `results/tables/backtest_summary.csv`。T覆盖 **2015-03-20 至 2026-07-27**，TL覆盖 **2023-04-21 至 2026-08-25**。
+以下结果来自当前仓库中的 `results/tables/backtest_summary.csv`。T覆盖 **2015-03-20 至 2026-08-26**，TL覆盖 **2023-04-21 至 2026-08-25**。
 <!-- /AUTO-DATE-RANGE-ZH -->
 
 <!-- AUTO-TABLE-ZH -->
 | 合约 | 策略 | 累计收益 | 年化收益 | 年化波动率 | 夏普比率 | 最大回撤 | Calmar | 胜率 | 换手率 |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| T | vpin_strategy | 0.149933 | 0.012865 | 0.032221 | 0.399285 | 0.067382 | 0.190932 | 0.416848 | 0.287945 |
-| T | long_only_benchmark | 0.272923 | 0.022327 | 0.035258 | 0.633233 | 0.073460 | 0.303933 | 0.518155 | 0.000000 |
+| T | vpin_strategy | 0.149933 | 0.012861 | 0.032215 | 0.399211 | 0.067382 | 0.190862 | 0.416697 | 0.288203 |
+| T | long_only_benchmark | 0.272923 | 0.022319 | 0.035252 | 0.633115 | 0.073460 | 0.303822 | 0.517967 | 0.000000 |
 | TL | vpin_strategy | 0.110943 | 0.034086 | 0.057884 | 0.588864 | 0.070108 | 0.486193 | 0.439949 | 0.289507 |
 | TL | long_only_benchmark | 0.211858 | 0.063130 | 0.063157 | 0.999576 | 0.091549 | 0.689574 | 0.557522 | 0.000000 |
 <!-- /AUTO-TABLE-ZH -->
@@ -401,14 +401,14 @@ Performance metrics include:
 ### Real Backtest Results
 
 <!-- AUTO-DATE-RANGE-EN -->
-The following results are from `results/tables/backtest_summary.csv`. T covers **2015-03-20 through 2026-07-27**, while TL covers **2023-04-21 through 2026-08-25**.
+The following results are from `results/tables/backtest_summary.csv`. T covers **2015-03-20 through 2026-08-26**, while TL covers **2023-04-21 through 2026-08-25**.
 <!-- /AUTO-DATE-RANGE-EN -->
 
 <!-- AUTO-TABLE-EN -->
 | Contract | Strategy | Cumulative Return | Annualized Return | Annualized Volatility | Sharpe Ratio | Max Drawdown | Calmar | Win Rate | Turnover |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| T | vpin_strategy | 0.149933 | 0.012865 | 0.032221 | 0.399285 | 0.067382 | 0.190932 | 0.416848 | 0.287945 |
-| T | long_only_benchmark | 0.272923 | 0.022327 | 0.035258 | 0.633233 | 0.073460 | 0.303933 | 0.518155 | 0.000000 |
+| T | vpin_strategy | 0.149933 | 0.012861 | 0.032215 | 0.399211 | 0.067382 | 0.190862 | 0.416697 | 0.288203 |
+| T | long_only_benchmark | 0.272923 | 0.022319 | 0.035252 | 0.633115 | 0.073460 | 0.303822 | 0.517967 | 0.000000 |
 | TL | vpin_strategy | 0.110943 | 0.034086 | 0.057884 | 0.588864 | 0.070108 | 0.486193 | 0.439949 | 0.289507 |
 | TL | long_only_benchmark | 0.211858 | 0.063130 | 0.063157 | 0.999576 | 0.091549 | 0.689574 | 0.557522 | 0.000000 |
 <!-- /AUTO-TABLE-EN -->
