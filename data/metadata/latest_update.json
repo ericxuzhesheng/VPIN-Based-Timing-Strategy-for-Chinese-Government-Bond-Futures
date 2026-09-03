@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-09-02T21:13:36.471720+08:00",
-  "latest_completed_trade_date": "20260902",
+  "generated_at": "2026-09-03T21:14:43.771117+08:00",
+  "latest_completed_trade_date": "20260903",
   "frequency": "5min",
   "canonical_source_policy": "tushare_primary_akshare_exact_gap_fill",
   "products": [
     {
       "product": "T",
       "start_date": "20150320",
-      "end_date": "20260902",
-      "mapping_rows": 2787,
+      "end_date": "20260903",
+      "mapping_rows": 2788,
       "quality": {
         "rows": 147163,
         "first_datetime": "2015-03-20T09:15:00",
@@ -52,7 +52,8 @@
           "2026-08-28",
           "2026-08-31",
           "2026-09-01",
-          "2026-09-02"
+          "2026-09-02",
+          "2026-09-03"
         ]
       },
       "source_overlap": {
@@ -89,8 +90,8 @@
     {
       "product": "TL",
       "start_date": "20230421",
-      "end_date": "20260902",
-      "mapping_rows": 817,
+      "end_date": "20260903",
+      "mapping_rows": 818,
       "quality": {
         "rows": 41131,
         "first_datetime": "2023-04-21T09:30:00",
@@ -128,7 +129,8 @@
           "2026-08-28",
           "2026-08-31",
           "2026-09-01",
-          "2026-09-02"
+          "2026-09-02",
+          "2026-09-03"
         ]
       },
       "source_overlap": {
