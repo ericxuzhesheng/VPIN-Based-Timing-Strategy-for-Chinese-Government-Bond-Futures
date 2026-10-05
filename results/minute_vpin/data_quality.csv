@@ -1,0 +1,5 @@
+rows,complete_rows,observed_days,complete_days,incomplete_days,missing_open_days,first_datetime,last_datetime,zero_volume_bars,contracts,product,rolls_or_gaps,delayed_entries,no_morning_entry,unverified_exit,zero_volume_final_bars
+509040,509040,1969,1969,0,0,2018-08-20 09:16:00,2026-09-30 15:15:00,112580,33,TS,33,189,3,118,120
+834660,834660,3175,3175,0,0,2013-09-09 09:16:00,2026-09-30 15:15:00,34445,53,TF,53,8,0,0,0
+734760,734760,2805,2805,0,0,2015-03-23 09:16:00,2026-09-30 15:15:00,6621,46,T,46,3,0,0,0
+212925,212925,835,835,0,0,2023-04-24 09:31:00,2026-09-30 15:15:00,2644,15,TL,15,0,0,0,0

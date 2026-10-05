@@ -1,5 +1,16 @@
 # 基于 VPIN 的中国国债期货择时框架 | VPIN-Based Timing Strategy for Chinese Government Bond Futures
 
+> **2026-10-05 更新：四品种一分钟固定成交量 VPIN**
+>
+> 最新研究入口为 `python vpin_timing.py --data-dir "path/to/cgb-market-data"`，处理 TS、TF、T、TL 的 Tushare 一分钟真实月合约数据。修复固定分钟根冒充成交量桶的问题，跨根部分成交量按比例切割、完成桶后才更新指标；换月和开市日缺口重置状态。前一完整开市日信号次日执行，同口径日内基准、单边 0/1/3 bp 成本、2023 训练 / 2024 验证 / 2025 年起固定检验。
+>
+> [新研究报告](results/minute_vpin/report.md) · [预先固定协议](results/minute_vpin/protocol.md) · [独立核验记录](results/minute_vpin/verification.json)。分钟 BVC 是估计成交方向，OHLC 成交代理未经过真实盘口验证，改进构造不保证改进收益。原始分钟、完整桶和执行账本留在本地，不随 Git 发布；重新运行研究可生成。
+>
+> 下文旧五分钟结果和 `python vpin_timing.py` 无参数流程保留为历史复查。旧数据含 AKShare 缺口填充，旧指标按分钟根滚动，旧 close-to-close 会产生执行时间假设；它们不属于本次 Tushare 纯源一分钟研究。
+
+> **Current research:** `vpin_timing.py --data-dir` runs fixed-volume VPIN on four concrete Treasury futures products, using Tushare-only minute bars, causal calibration, proportional bar splitting and completed buckets. The daily strategy and benchmark use the same intraday proxy fills and costs. A fixed eight-candidate grid selects in 2023, validates in 2024, and remains unchanged from 2025 onward. Older five-minute outputs below are legacy reproduction results.
+
+
 <p align="center">
   <a href="#zh"><img src="https://img.shields.io/badge/LANGUAGE-%E4%B8%AD%E6%96%87-E84D3D?style=for-the-badge&labelColor=3B3F47" alt="LANGUAGE 中文"></a>
   <a href="#en"><img src="https://img.shields.io/badge/LANGUAGE-ENGLISH-2F73C9?style=for-the-badge&labelColor=3B3F47" alt="LANGUAGE ENGLISH"></a>

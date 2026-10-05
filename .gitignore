@@ -4,3 +4,10 @@ __pycache__/
 .coverage
 htmlcov/
 work/
+
+# Large minute bucket ledgers are reproducible from the shared source cache.
+/data/processed/minute_vpin/
+
+# Execution records remain local and are regenerated from the market-data cache.
+/results/minute_vpin/execution_ledger.csv
+/results/minute_vpin/TS_execution_failures.csv

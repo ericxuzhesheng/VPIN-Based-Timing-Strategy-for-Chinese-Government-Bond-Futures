@@ -1,0 +1,3 @@
+product,phase,unverified_exit,reason
+TS,history,118,Historical entry observed but zero-volume final bar; no verified exit or complete performance.
+TS,all,118,Historical entry observed but zero-volume final bar; no verified exit or complete performance.

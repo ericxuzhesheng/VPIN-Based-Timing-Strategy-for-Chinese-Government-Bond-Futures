@@ -697,6 +697,7 @@ def parse_args() -> argparse.Namespace:
         description="VPIN timing research for Chinese government bond futures.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
+    parser.add_argument("--data-dir", type=Path, default=None, help="Tushare four-product 1-minute dataset; run causal volume-bucket research.")
     parser.add_argument(
         "--input",
         type=Path,
@@ -836,6 +837,13 @@ def run_contract_pipeline(
 def main() -> None:
     """Run the end-to-end VPIN research workflow."""
     args = parse_args()
+    if args.data_dir is not None:
+        if args.input is not None or args.contract != "ALL" or args.start_date is not None:
+            raise ValueError("--data-dir uses the frozen four-product protocol; do not combine with --input, --contract or --start-date.")
+        from minute_vpin import run_research
+        target = args.output_dir / "minute_vpin"
+        run_research(args.data_dir, target)
+        return
     contracts = resolve_contracts(args.contract)
     if args.input is not None and len(contracts) > 1:
         raise ValueError("`--input` can only be used with a single contract. Use the default files for ALL.")

@@ -1,0 +1,45 @@
+{
+  "status": "passed",
+  "verified_at": "2026-10-05T11:45:17.249139+08:00",
+  "daily_cashflows": 8784,
+  "selected": {
+    "bucket_divisor": 25,
+    "bucket_window": 20,
+    "threshold": 0.8
+  },
+  "checks": [
+    {
+      "product": "TS",
+      "daily_cashflows_verified": 1969,
+      "complete_minutes": 509040,
+      "selected_buckets": 87211,
+      "mapping_dates_verified": 1969,
+      "unverified_historical_exits": 118
+    },
+    {
+      "product": "TF",
+      "daily_cashflows_verified": 3175,
+      "complete_minutes": 834660,
+      "selected_buckets": 92796,
+      "mapping_dates_verified": 3175,
+      "unverified_historical_exits": 0
+    },
+    {
+      "product": "T",
+      "daily_cashflows_verified": 2805,
+      "complete_minutes": 734760,
+      "selected_buckets": 81535,
+      "mapping_dates_verified": 2805,
+      "unverified_historical_exits": 0
+    },
+    {
+      "product": "TL",
+      "daily_cashflows_verified": 835,
+      "complete_minutes": 212925,
+      "selected_buckets": 27766,
+      "mapping_dates_verified": 835,
+      "unverified_historical_exits": 0
+    }
+  ],
+  "scope": "Independent source prices, prior-day mapping/signal timing, ADV calibration, equal-volume bucket accounting, historical ranks, slope and net-return compounding; proxy fill assumptions remain unverified by tick/bid-ask data."
+}
