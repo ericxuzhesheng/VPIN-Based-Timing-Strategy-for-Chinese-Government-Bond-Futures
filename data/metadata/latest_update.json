@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-11-24T04:52:02.919578+08:00",
-  "latest_completed_trade_date": "20261123",
+  "generated_at": "2026-11-25T03:55:56.816118+08:00",
+  "latest_completed_trade_date": "20261124",
   "frequency": "5min",
   "canonical_source_policy": "tushare_primary_akshare_exact_gap_fill",
   "products": [
     {
       "product": "T",
       "start_date": "20150320",
-      "end_date": "20261123",
-      "mapping_rows": 2839,
+      "end_date": "20261124",
+      "mapping_rows": 2840,
       "quality": {
         "rows": 147163,
         "first_datetime": "2015-03-20T09:15:00",
@@ -104,7 +104,8 @@
           "2026-11-18",
           "2026-11-19",
           "2026-11-20",
-          "2026-11-23"
+          "2026-11-23",
+          "2026-11-24"
         ]
       },
       "source_overlap": {
@@ -141,18 +142,18 @@
     {
       "product": "TL",
       "start_date": "20230421",
-      "end_date": "20261123",
-      "mapping_rows": 869,
+      "end_date": "20261124",
+      "mapping_rows": 870,
       "quality": {
-        "rows": 41131,
+        "rows": 41183,
         "first_datetime": "2023-04-21T09:30:00",
-        "last_datetime": "2026-08-25T15:15:00",
-        "trade_dates": 791,
-        "contracts": 15,
-        "rolls": 14,
+        "last_datetime": "2026-11-24T15:15:00",
+        "trade_dates": 792,
+        "contracts": 16,
+        "rolls": 15,
         "source_rows": {
           "akshare": 51,
-          "tushare": 41080
+          "tushare": 41132
         },
         "missing_trade_dates": [
           "2026-07-28",
@@ -236,17 +237,17 @@
         ]
       },
       "source_overlap": {
-        "overlap_rows": 8103,
-        "max_abs_open_diff": 0.16,
-        "open_equal_rate": 0.82488,
+        "overlap_rows": 8154,
+        "max_abs_open_diff": 0.18,
+        "open_equal_rate": 0.824381,
         "max_abs_high_diff": 0.09,
-        "high_equal_rate": 0.955449,
+        "high_equal_rate": 0.955114,
         "max_abs_low_diff": 0.13,
-        "low_equal_rate": 0.950019,
+        "low_equal_rate": 0.949963,
         "max_abs_close_diff": 0.03,
-        "close_equal_rate": 0.912502,
-        "volume_equal_rate": 0.417129,
-        "open_interest_equal_rate": 0.826237
+        "close_equal_rate": 0.913049,
+        "volume_equal_rate": 0.415747,
+        "open_interest_equal_rate": 0.827324
       },
       "akshare_errors": {}
     }
