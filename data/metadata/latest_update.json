@@ -1,24 +1,24 @@
 {
-  "generated_at": "2026-11-25T03:55:56.816118+08:00",
-  "latest_completed_trade_date": "20261124",
+  "generated_at": "2026-11-26T02:58:56.381191+08:00",
+  "latest_completed_trade_date": "20261125",
   "frequency": "5min",
   "canonical_source_policy": "tushare_primary_akshare_exact_gap_fill",
   "products": [
     {
       "product": "T",
       "start_date": "20150320",
-      "end_date": "20261124",
-      "mapping_rows": 2840,
+      "end_date": "20261125",
+      "mapping_rows": 2841,
       "quality": {
-        "rows": 147163,
+        "rows": 147215,
         "first_datetime": "2015-03-20T09:15:00",
-        "last_datetime": "2026-08-26T15:15:00",
-        "trade_dates": 2755,
-        "contracts": 46,
-        "rolls": 45,
+        "last_datetime": "2026-11-25T15:15:00",
+        "trade_dates": 2756,
+        "contracts": 47,
+        "rolls": 46,
         "source_rows": {
           "akshare": 64,
-          "tushare": 147099
+          "tushare": 147151
         },
         "missing_trade_dates": [
           "2015-05-04",
@@ -109,17 +109,17 @@
         ]
       },
       "source_overlap": {
-        "overlap_rows": 17391,
+        "overlap_rows": 17442,
         "max_abs_open_diff": 0.1,
-        "open_equal_rate": 0.776264,
+        "open_equal_rate": 0.776516,
         "max_abs_high_diff": 0.105,
-        "high_equal_rate": 0.946294,
+        "high_equal_rate": 0.946107,
         "max_abs_low_diff": 0.085,
-        "low_equal_rate": 0.946122,
+        "low_equal_rate": 0.946164,
         "max_abs_close_diff": 0.1,
-        "close_equal_rate": 0.85619,
-        "volume_equal_rate": 0.406877,
-        "open_interest_equal_rate": 0.699615
+        "close_equal_rate": 0.85661,
+        "volume_equal_rate": 0.406031,
+        "open_interest_equal_rate": 0.700493
       },
       "akshare_errors": {
         "T1509.CFX": "AKShare futures_zh_minute_sina T1509 failed after 2 attempts: Length mismatch: Expected axis has 0 elements, new values have 7 elements",
@@ -142,8 +142,8 @@
     {
       "product": "TL",
       "start_date": "20230421",
-      "end_date": "20261124",
-      "mapping_rows": 870,
+      "end_date": "20261125",
+      "mapping_rows": 871,
       "quality": {
         "rows": 41183,
         "first_datetime": "2023-04-21T09:30:00",
@@ -233,7 +233,8 @@
           "2026-11-18",
           "2026-11-19",
           "2026-11-20",
-          "2026-11-23"
+          "2026-11-23",
+          "2026-11-25"
         ]
       },
       "source_overlap": {
